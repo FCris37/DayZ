@@ -148,6 +148,34 @@ foreach ($d in 'expansion\traders', 'expansion\objects') {
 }
 Ok 'Carpetas expansion\traders y expansion\objects listas'
 
+# e) types.xml de los mods (BBP, MuchStuffPack, coleccionables...) para loot y persistencia
+$texto = Get-Content -Raw -Encoding UTF8 $core
+$cambios = $false
+foreach ($m in ($mods | Where-Object { $_.TiposCE })) {
+    $carpetaMod = Join-Path $Servidor $m.Carpeta
+    if (-not (Test-Path $carpetaMod)) { continue }
+    # El types.xml suele venir en una carpeta tipo "Extras" o "ServerFiles". Elegimos el de ruta mas corta.
+    $tipos = Get-ChildItem $carpetaMod -Recurse -File -Filter '*.xml' -ErrorAction SilentlyContinue |
+        Where-Object { $_.Name -match '(?i)^(.*[_\-\s])?types\.xml$' -and $_.Name -notmatch '(?i)spawnable' } |
+        Where-Object { (Get-Content $_.FullName -TotalCount 20 -ErrorAction SilentlyContinue) -match '<types' } |
+        Sort-Object { $_.FullName.Length } | Select-Object -First 1
+    if (-not $tipos) {
+        Aviso "$($m.Carpeta): no trae types.xml. Sus objetos funcionaran, pero no apareceran como loot."
+        continue
+    }
+    $nombre = $m.Carpeta.TrimStart('@')
+    $destino = Join-Path $Mision "mods_ce\$nombre"
+    New-Item -ItemType Directory -Force -Path $destino | Out-Null
+    Copy-Item $tipos.FullName (Join-Path $destino 'types.xml') -Force
+    if ($texto -notmatch [regex]::Escape("folder=""mods_ce/$nombre""")) {
+        $bloque = "`t<ce folder=""mods_ce/$nombre"">`r`n`t`t<file name=""types.xml"" type=""types"" />`r`n`t</ce>`r`n</economycore>"
+        $texto = $texto -replace '</economycore>', $bloque
+        $cambios = $true
+    }
+    Ok "$($m.Carpeta): types.xml registrado ($($tipos.FullName.Substring($carpetaMod.Length + 1)))"
+}
+if ($cambios) { Copia-Seguridad $core; Guardar-Texto $texto $core }
+
 # ---------------------------------------------------------------- serverDZ.cfg
 Titulo '6/6  serverDZ.cfg'
 $pwdArchivo = Join-Path $Servidor 'password_admin.txt'
@@ -169,4 +197,4 @@ Info "Password de admin (RCon / #login): guardada en $pwdArchivo"
 
 Titulo 'LISTO'
 Info 'Siguiente paso: 2-INICIAR-SERVIDOR.bat'
-Info 'El primer arranque genera los ajustes de Expansion. Despues usa 3-APLICAR-ZONAS-Y-TRADERS.bat'
+Info 'El primer arranque genera los ajustes de Expansion. Despues usa 3-APLICAR-CONFIGURACION.bat'

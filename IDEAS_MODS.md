@@ -2,22 +2,24 @@
 
 Busca cada uno por su nombre en el Steam Workshop de DayZ y comprueba la fecha de la última actualización antes de instalarlo. Añádelo a `config/mods.json` y activa los mods **de uno en uno**.
 
-## Ya vienen dentro de Expansion
+## Ya activado
 
-Basta con configurarlos en `mpmissions\empty.deerisle\expansion\settings\` o en `profiles\ExpansionMod\`.
+Expansion quests (tesoro, pieles, diarios), bandidos con IA en las zonas PvP, airdrops, garaje, BaseBuildingPlus, MuchStuffPack y RetroCollectibles.
 
-- **Quests:** misiones de recoger, entregar o matar con recompensas en dinero. Encaja muy bien en PvE. Incluye **búsquedas del tesoro** (*Treasure Hunt*), que combinan bien con los coleccionables.
-- **Expansion AI:** patrullas de bandidos con IA. Dan PvE con peligro real y se pueden poner patrullas duras solo dentro de las zonas PvP.
-- **Misiones dinámicas y airdrops:** eventos que llevan a los jugadores a moverse por el mapa.
+## Siguiente paso dentro de Expansion
+
+No hace falta instalar nada: basta con configurarlos en `mpmissions\empty.deerisle\expansion\settings\` o en `profiles\ExpansionMod\`.
+
+- **Más quests:** se añaden como JSON en `profiles\ExpansionMod\Quests\`, siguiendo el modelo de las que crea `scripts/configurar.ps1`. Algunas ideas:
+  - Matar zombis (objetivo *Target*).
+  - Limpiar un campamento de bandidos (objetivo *AICamp*).
+  - Escoltar a un superviviente (objetivo *AIVIP*).
 - **Hardline:** sistema de reputación y rareza de objetos. Puedes hacer que algunos traders pidan reputación.
 - **Personal Storage:** almacén personal en los traders. Útil en PvE para que nadie pierda todo.
-- **Garaje de vehículos y llaves de coche:** evita robos de coches en PvE.
 - **Grupos/Party y marcadores en el mapa.**
 
-## Bases
+## Bases (más opciones)
 
-- **BaseBuildingPlus (BBP):** muros, suelos y tejados de más niveles. Es compatible con los candados de Expansion; pon `CodelockAttachMode` a 1 o 3.
-- **MuchStuffPack:** muebles, taquillas y almacenamiento para decorar la base.
 - **RaG Base Items / MMG Base Storage:** estanterías, armeros y cajas de almacenamiento.
 - **Breachingcharge:** cargas para asaltar bases. Solo tiene sentido si permites raid en las zonas PvP.
 
@@ -29,9 +31,8 @@ Basta con configurarlos en `mpmissions\empty.deerisle\expansion\settings\` o en 
 
 ## Coleccionables y economía
 
-- **RetroCollectibles:** objetos retro para vender. Ya está en `mods.json` desactivado.
 - **Dog Tags:** chapas de identificación que caen al morir. En las zonas PvP se pueden vender como "trofeo".
-- **Mods de cartas, figuras o monedas antiguas:** busca *collectible* en el Workshop. Cualquiera sirve: solo hay que meter sus classnames en `Coleccionables.json`.
+- **Mods de cartas, figuras o monedas antiguas:** busca *collectible* en el Workshop. Añádelo a `mods.json` con `"TiposCE": true` y un bloque `"Mercado"` con `"Trader": "Coleccionista"` y `"Modo": 2`, igual que RetroCollectibles: su categoría se crea sola.
 - **Animales y caza (p. ej. Wolf/Bear packs, mods de pesca):** más trofeos para el Coleccionista.
 
 ## Ambiente PvE
@@ -52,5 +53,5 @@ Hay usuarios que reportan conflictos de **PVEZ Reloaded** con algunas versiones 
 1. `@CF`, `@DabsFramework`
 2. `@DayZ-Expansion-Licensed`, `@DayZ-Expansion-Bundle`
 3. Mapa: `@DeerIsle`
-4. Mods de contenido (armas, bases, coleccionables)
+4. Mods de contenido: `@MuchFramework`, `@BaseBuildingPlus`, `@MuchStuffPack`, `@RetroCollectibles`, armas...
 5. Mods de reglas o admin: `@PVEZ-Reloaded`, `@CommunityOnlineTools`

@@ -1,14 +1,120 @@
 {
-    "_info": "Lista de mods. Orden = orden de carga. Tipo 'cliente' = lo necesitan servidor y jugadores (-mod). Tipo 'servidor' = solo el servidor (-serverMod). Pon Activo en false para desactivar uno sin borrarlo.",
+    "_info": "Lista de mods. Orden = orden de carga. Tipo 'cliente' = lo necesitan servidor y jugadores (-mod); 'servidor' = solo el servidor (-serverMod). Activo=false lo desactiva sin borrarlo. TiposCE=true: el instalador busca el types.xml del mod y lo registra en la mision (loot y persistencia). Mercado: crea una categoria en el mercado de Expansion con los objetos de su types.xml que cumplan el Filtro (expresion regular) y la anade al Trader indicado (Modo 0=solo comprar, 1=comprar y vender, 2=solo vender).",
     "Mods": [
-        { "Id": "1559212036", "Carpeta": "@CF",                     "Tipo": "cliente", "Activo": true,  "Nota": "Community Framework. Base de casi todos los mods." },
-        { "Id": "2545327648", "Carpeta": "@DabsFramework",          "Tipo": "cliente", "Activo": true,  "Nota": "Dabs Framework. Lo necesita Expansion." },
-        { "Id": "2116157322", "Carpeta": "@DayZ-Expansion-Licensed","Tipo": "cliente", "Activo": true,  "Nota": "Modelos con licencia de Expansion (no van dentro del Bundle)." },
-        { "Id": "2572331007", "Carpeta": "@DayZ-Expansion-Bundle",  "Tipo": "cliente", "Activo": true,  "Nota": "Traders/mercado, zonas seguras, bases con territorio y candados, vehiculos, armas extra, misiones, grupos, mapa..." },
-        { "Id": "1602372402", "Carpeta": "@DeerIsle",               "Tipo": "cliente", "Activo": true,  "Nota": "Mapa Deer Isle." },
-        { "Id": "2831742849", "Carpeta": "@PVEZ-Reloaded",          "Tipo": "cliente", "Activo": true,  "Nota": "PvE en todo el mapa con zonas PvP delimitadas." },
-        { "Id": "1564026768", "Carpeta": "@CommunityOnlineTools",   "Tipo": "cliente", "Activo": true,  "Nota": "Herramienta de admin (teletransporte, ver coordenadas, spawnear objetos)." },
-        { "Id": "2443122116", "Carpeta": "@SNAFU-Weapons",          "Tipo": "cliente", "Activo": false, "Nota": "Pack grande de armas. Comprueba que siga publicado antes de activarlo." },
-        { "Id": "2927929000", "Carpeta": "@RetroCollectibles",      "Tipo": "cliente", "Activo": false, "Nota": "Coleccionables retro para vender. Tras activarlo anade sus classnames a Coleccionables.json." }
+        {
+            "Id": "1559212036",
+            "Carpeta": "@CF",
+            "Tipo": "cliente",
+            "Activo": true,
+            "Nota": "Community Framework. Base de casi todos los mods."
+        },
+        {
+            "Id": "2545327648",
+            "Carpeta": "@DabsFramework",
+            "Tipo": "cliente",
+            "Activo": true,
+            "Nota": "Dabs Framework. Lo necesita Expansion."
+        },
+        {
+            "Id": "2116157322",
+            "Carpeta": "@DayZ-Expansion-Licensed",
+            "Tipo": "cliente",
+            "Activo": true,
+            "Nota": "Modelos con licencia de Expansion (no van dentro del Bundle)."
+        },
+        {
+            "Id": "2572331007",
+            "Carpeta": "@DayZ-Expansion-Bundle",
+            "Tipo": "cliente",
+            "Activo": true,
+            "Nota": "Traders/mercado, zonas seguras, bases con territorio y candados, vehiculos, armas extra, misiones, grupos, mapa..."
+        },
+        {
+            "Id": "1602372402",
+            "Carpeta": "@DeerIsle",
+            "Tipo": "cliente",
+            "Activo": true,
+            "Nota": "Mapa Deer Isle."
+        },
+        {
+            "Id": "3171576913",
+            "Carpeta": "@MuchFramework",
+            "Tipo": "cliente",
+            "Activo": true,
+            "Nota": "Requisito de MuchStuffPack. ID sacado de su historial de cambios: compruebalo en el Workshop."
+        },
+        {
+            "Id": "1710977250",
+            "Carpeta": "@BaseBuildingPlus",
+            "Tipo": "cliente",
+            "Activo": true,
+            "TiposCE": true,
+            "Mercado": {
+                "Archivo": "BBP_Kits",
+                "Nombre": "Bases (BBP)",
+                "Trader": "BuildingSupplies",
+                "Modo": 1,
+                "Filtro": "(?i)kit",
+                "PrecioMin": 300,
+                "PrecioMax": 900
+            },
+            "Nota": "BaseBuildingPlus: muros, suelos, tejados y puertas por niveles. Los candados de Expansion funcionan en sus puertas."
+        },
+        {
+            "Id": "1991570984",
+            "Carpeta": "@MuchStuffPack",
+            "Tipo": "cliente",
+            "Activo": true,
+            "TiposCE": true,
+            "Mercado": {
+                "Archivo": "MSP_Muebles",
+                "Nombre": "Muebles y almacenaje",
+                "Trader": "BuildingSupplies",
+                "Modo": 1,
+                "Filtro": "(?i)kit",
+                "PrecioMin": 200,
+                "PrecioMax": 800
+            },
+            "Nota": "Muebles, taquillas y almacenaje para la base. Su autor ya no lo actualiza (funciona, pero sin parches nuevos)."
+        },
+        {
+            "Id": "2927929000",
+            "Carpeta": "@RetroCollectibles",
+            "Tipo": "cliente",
+            "Activo": true,
+            "TiposCE": true,
+            "Mercado": {
+                "Archivo": "Coleccionables_Retro",
+                "Nombre": "Coleccionables retro",
+                "Trader": "Coleccionista",
+                "Modo": 2,
+                "Filtro": ".*",
+                "PrecioMin": 150,
+                "PrecioMax": 600
+            },
+            "Nota": "Coleccionables retro (recreativas, consolas...) que se venden al Coleccionista."
+        },
+        {
+            "Id": "2831742849",
+            "Carpeta": "@PVEZ-Reloaded",
+            "Tipo": "cliente",
+            "Activo": true,
+            "Nota": "PvE en todo el mapa con zonas PvP delimitadas."
+        },
+        {
+            "Id": "1564026768",
+            "Carpeta": "@CommunityOnlineTools",
+            "Tipo": "cliente",
+            "Activo": true,
+            "Nota": "Herramienta de admin (teletransporte, ver coordenadas, spawnear objetos)."
+        },
+        {
+            "Id": "2443122116",
+            "Carpeta": "@SNAFU-Weapons",
+            "Tipo": "cliente",
+            "Activo": false,
+            "TiposCE": true,
+            "Nota": "Pack grande de armas. Comprueba que siga publicado antes de activarlo."
+        }
     ]
 }
