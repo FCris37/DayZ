@@ -161,20 +161,37 @@ foreach ($m in ($mods | Where-Object { $_.TiposCE })) {
         Where-Object { $_.Name -match '(?i)types\.xml$' -and $_.Name -notmatch '(?i)spawnable' } |
         Where-Object { (Get-Content $_.FullName -TotalCount 20 -ErrorAction SilentlyContinue) -match '<types' } |
         Sort-Object { $_.FullName.Length })
-    if ($candidatos.Count -eq 0) {
-        Aviso "$($m.Carpeta): no trae types.xml. Sus objetos funcionaran, pero no apareceran como loot."
-        continue
-    }
-    $dirTipos = $candidatos[0].DirectoryName
-    $tipos = @($candidatos | Where-Object { $_.DirectoryName -eq $dirTipos } | Sort-Object Name)
     $nombre = $m.Carpeta.TrimStart('@')
     $destino = Join-Path $Mision "mods_ce\$nombre"
-    if (Test-Path $destino) { Remove-Item $destino -Recurse -Force }
-    New-Item -ItemType Directory -Force -Path $destino | Out-Null
-    $lineas = ''
-    foreach ($t in $tipos) {
-        Copy-Item $t.FullName (Join-Path $destino $t.Name) -Force
-        $lineas += "`t`t<file name=""$($t.Name)"" type=""types"" />`r`n"
+    if ($candidatos.Count -eq 0) {
+        # Sin types.xml: se leen los nombres de los objetos de los .pbo y se genera uno basico
+        # (no aparecen como loot, pero se guardan en las bases y se pueden vender en los traders)
+        $clases = @(Clases-DeMod $carpetaMod)
+        if ($clases.Count -eq 0) {
+            Aviso "$($m.Carpeta): no trae types.xml y no se pudieron leer sus objetos. Funcionara, pero no saldra en el mercado."
+            continue
+        }
+        if (Test-Path $destino) { Remove-Item $destino -Recurse -Force }
+        New-Item -ItemType Directory -Force -Path $destino | Out-Null
+        $xml = "<?xml version=""1.0"" encoding=""UTF-8"" standalone=""yes"" ?>`r`n<types>`r`n"
+        foreach ($cl in $clases) {
+            $xml += "    <type name=""$cl"">`r`n        <nominal>0</nominal>`r`n        <lifetime>3888000</lifetime>`r`n        <restock>0</restock>`r`n        <min>0</min>`r`n        <quantmin>-1</quantmin>`r`n        <quantmax>-1</quantmax>`r`n        <cost>100</cost>`r`n        <flags count_in_cargo=""0"" count_in_hoarder=""0"" count_in_map=""1"" count_in_player=""0"" crafted=""0"" deloot=""0""/>`r`n    </type>`r`n"
+        }
+        $xml += "</types>`r`n"
+        Guardar-Texto $xml (Join-Path $destino 'generado_types.xml')
+        $tipos = @(Get-Item (Join-Path $destino 'generado_types.xml'))
+        $lineas = "`t`t<file name=""generado_types.xml"" type=""types"" />`r`n"
+        Ok "$($m.Carpeta): sin types.xml; leidos $($clases.Count) objetos de sus .pbo"
+    } else {
+        $dirTipos = $candidatos[0].DirectoryName
+        $tipos = @($candidatos | Where-Object { $_.DirectoryName -eq $dirTipos } | Sort-Object Name)
+        if (Test-Path $destino) { Remove-Item $destino -Recurse -Force }
+        New-Item -ItemType Directory -Force -Path $destino | Out-Null
+        $lineas = ''
+        foreach ($t in $tipos) {
+            Copy-Item $t.FullName (Join-Path $destino $t.Name) -Force
+            $lineas += "`t`t<file name=""$($t.Name)"" type=""types"" />`r`n"
+        }
     }
     # Sustituye el registro anterior de este mod (si lo habia) por el nuevo
     $patron = '(?s)\s*<ce folder="mods_ce/' + [regex]::Escape($nombre) + '">.*?</ce>'

@@ -81,7 +81,7 @@
             "Id": "2927929000",
             "Carpeta": "@RetroCollectibles",
             "Tipo": "cliente",
-            "Activo": false,
+            "Activo": true,
             "TiposCE": true,
             "Mercado": {
                 "Archivo": "Coleccionables_Retro",
@@ -92,7 +92,7 @@
                 "PrecioMin": 150,
                 "PrecioMax": 600
             },
-            "Nota": "DESACTIVADO de momento: no trae types.xml, asi que no sale como loot ni se puede vender hasta sacar sus classnames de su PBO."
+            "Nota": "Coleccionables retro que se venden al Coleccionista. No trae types.xml: el instalador lee sus objetos de los .pbo."
         },
         {
             "Id": "2651195301",
@@ -189,7 +189,7 @@
                 "PrecioMin": 300,
                 "PrecioMax": 1500
             },
-            "Nota": "Furniture Pack: muebles para decorar las bases. Se venden en la caseta de Construccion (si el mod trae types.xml)."
+            "Nota": "Furniture Pack: muebles para las bases, a la venta en la caseta de Construccion. No trae types.xml: el instalador lee sus objetos de los .pbo."
         },
         {
             "Id": "2831742849",
