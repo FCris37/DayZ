@@ -81,7 +81,7 @@
             "Id": "2927929000",
             "Carpeta": "@RetroCollectibles",
             "Tipo": "cliente",
-            "Activo": true,
+            "Activo": false,
             "TiposCE": true,
             "Mercado": {
                 "Archivo": "Coleccionables_Retro",
@@ -92,7 +92,7 @@
                 "PrecioMin": 150,
                 "PrecioMax": 600
             },
-            "Nota": "Coleccionables retro que se venden al Coleccionista. No trae types.xml: el instalador lee sus objetos de los .pbo."
+            "Nota": "DESACTIVADO: no trae types.xml y sus .pbo estan protegidos, asi que no se pueden leer sus objetos para venderlos."
         },
         {
             "Id": "2651195301",
