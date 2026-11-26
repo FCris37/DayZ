@@ -1,0 +1,7 @@
+Pon aqui tus construcciones hechas con DayZ Editor, exportadas en formato Expansion (.map).
+
+Cada vez que ejecutes 3-APLICAR-CONFIGURACION.bat se copian a:
+  <servidor>\mpmissions\empty.deerisle\expansion\objects\
+y Expansion las carga solo al arrancar el servidor (los jugadores no necesitan nada extra).
+
+Para quitar una construccion: borra su .map de esta carpeta y vuelve a aplicar.

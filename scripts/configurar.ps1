@@ -313,6 +313,16 @@ if ($mc -and $mc.Activo) {
     Info 'Mercado central desactivado en config\zonas.json.'
 }
 
+# ======================================================================= 1c) Mapeado propio (DayZ Editor)
+$dirMapeado = Join-Path $CarpetaConfig 'mapeado'
+$dirObjetosMision = Join-Path $Mision 'expansion\objects'
+New-Item -ItemType Directory -Force -Path $dirObjetosMision | Out-Null
+# Quitar los que copiamos la vez anterior (llevan el prefijo kit_) y volver a copiar los actuales
+Get-ChildItem $dirObjetosMision -Filter 'kit_*.map' -ErrorAction SilentlyContinue | Remove-Item -Force
+$mapas = @(Get-ChildItem $dirMapeado -Filter *.map -ErrorAction SilentlyContinue)
+foreach ($f in $mapas) { Copy-Item $f.FullName (Join-Path $dirObjetosMision ('kit_' + $f.Name)) -Force }
+if ($mapas.Count) { Ok "Mapeado propio: $($mapas.Count) archivo(s) .map copiados ($(($mapas | ForEach-Object { $_.Name }) -join ', '))" }
+
 # ======================================================================= 2) Zonas seguras
 Titulo '2/7  Zonas seguras (traders)'
 $safe = Leer-Json $safeFile
