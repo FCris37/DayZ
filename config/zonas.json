@@ -1,34 +1,123 @@
 {
     "_info": "Coordenadas [X, Y, Z]: X = oeste/este, Y = altura, Z = sur/norte. Sacalas en el juego con Community Online Tools. Y = 0 significa 'pegado al suelo' (vale para zonas, bandidos, quests y tesoros, NO para los NPC de los traders). Lo que tiene Activo=false se ignora.",
-
     "_pueblos": "Coordenadas X,Z de pueblos de Deer Isle (sacadas del codigo de Expansion, son sus puntos de airdrop): Portland 6055,13429 | Mountainville 7911,8864 | Sandy Bay 4627,7507 | Old-Town 1849,8830 | Westbrook 3614,6360 | Oldfield 6117,7004 | Warren-Cove 6924,5473 | Georgstown 4522,4370 | Hazelands 4539,2317 | Greenville 4658,1414 | Stonington 6973,1701 | Kushville 7630,3717 | Oceanville 10179,4722",
-
     "DistanciaMinimaBasesAPvP": 500,
     "DistanciaMinimaBasesATraders": 300,
-
     "Traders": [
         {
             "Nombre": "Trader principal (Oldfield)",
             "Activo": false,
-            "Centro": [6117, 0, 7004],
+            "Centro": [
+                6117,
+                0,
+                7004
+            ],
             "RadioZonaSegura": 150,
             "NPCs": [
-                { "Clase": "ExpansionTraderDenis",    "Trader": "Weapons",          "Posicion": [0, 0, 0], "Orientacion": 0, "Ropa": "HunterPants_Spring,HuntingJacket_Summer,CombatBoots_Green" },
-                { "Clase": "ExpansionTraderMaria",    "Trader": "Clothing",         "Posicion": [0, 0, 0], "Orientacion": 0, "Ropa": "" },
-                { "Clase": "ExpansionTraderQuinn",    "Trader": "Consumables",      "Posicion": [0, 0, 0], "Orientacion": 0, "Ropa": "" },
-                { "Clase": "ExpansionTraderBoris",    "Trader": "BuildingSupplies", "Posicion": [0, 0, 0], "Orientacion": 0, "Ropa": "" },
-                { "Clase": "ExpansionTraderLewis",    "Trader": "Vehicles",         "Posicion": [0, 0, 0], "Orientacion": 0, "Ropa": "" },
-                { "Clase": "ExpansionTraderHelga",    "Trader": "Coleccionista",    "Posicion": [0, 0, 0], "Orientacion": 0, "Ropa": "" },
-                { "Clase": "ExpansionExchangeMachine","Trader": "Exchange",         "Posicion": [0, 0, 0], "Orientacion": 0, "Ropa": "" }
+                {
+                    "Clase": "ExpansionTraderDenis",
+                    "Trader": "Weapons",
+                    "Posicion": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "Orientacion": 0,
+                    "Ropa": "HunterPants_Spring,HuntingJacket_Summer,CombatBoots_Green"
+                },
+                {
+                    "Clase": "ExpansionTraderMaria",
+                    "Trader": "Clothing",
+                    "Posicion": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "Orientacion": 0,
+                    "Ropa": ""
+                },
+                {
+                    "Clase": "ExpansionTraderQuinn",
+                    "Trader": "Consumables",
+                    "Posicion": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "Orientacion": 0,
+                    "Ropa": ""
+                },
+                {
+                    "Clase": "ExpansionTraderBoris",
+                    "Trader": "BuildingSupplies",
+                    "Posicion": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "Orientacion": 0,
+                    "Ropa": ""
+                },
+                {
+                    "Clase": "ExpansionTraderLewis",
+                    "Trader": "Vehicles",
+                    "Posicion": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "Orientacion": 0,
+                    "Ropa": ""
+                },
+                {
+                    "Clase": "ExpansionTraderHelga",
+                    "Trader": "Coleccionista",
+                    "Posicion": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "Orientacion": 0,
+                    "Ropa": ""
+                },
+                {
+                    "Clase": "ExpansionExchangeMachine",
+                    "Trader": "Exchange",
+                    "Posicion": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "Orientacion": 0,
+                    "Ropa": ""
+                }
             ]
         }
     ],
-
     "ZonasPvP": [
-        { "Nombre": "PvP - Stonington",   "Activo": true,  "Centro": [6973, 0, 1701], "Radio": 500, "Bandidos": 4 },
-        { "Nombre": "PvP - Base militar", "Activo": false, "Centro": [0, 0, 0],       "Radio": 400, "Bandidos": 5 }
+        {
+            "Nombre": "PvP - Stonington",
+            "Activo": true,
+            "Centro": [
+                6973,
+                0,
+                1701
+            ],
+            "Radio": 500,
+            "Bandidos": 4
+        },
+        {
+            "Nombre": "PvP - Base militar",
+            "Activo": false,
+            "Centro": [
+                0,
+                0,
+                0
+            ],
+            "Radio": 400,
+            "Bandidos": 5
+        }
     ],
-
     "Bandidos": {
         "_info": "Patrullas de IA (faccion Raiders, hostiles con todos) dentro de cada zona PvP activa. 'Bandidos' de cada zona = maximo por patrulla (0 = sin patrulla).",
         "Faccion": "Raiders",
@@ -38,26 +127,85 @@
         "SegundosParaReaparecer": 1800,
         "SePuedenSaquear": true
     },
-
+    "Zombis": {
+        "_info": "Multiplica los zombis de Deer Isle. 1.0 = como viene el mapa, 2.0 = el doble, 3.0 = el triple. MaximoGlobal = tope de zombis vivos en todo el mapa a la vez (por defecto 1000). Mas zombis = mas carga para el PC.",
+        "Multiplicador": 2.0,
+        "MaximoGlobal": 2000
+    },
     "Garaje": {
         "_info": "Garaje de vehiculos de Expansion: guardar el coche en el garaje de tu territorio (bandera).",
         "Activo": true
     },
-
     "Quests": {
         "_info": "Sustituye las quests por defecto de Expansion (pensadas para Chernarus/Namalsk: en Deer Isle saldrian en 0,0,0) por estas. El NPC y los tesoros se colocan solos sobre el suelo.",
         "Activo": true,
         "NPC": {
             "Nombre": "Abe el Cazatesoros",
             "Clase": "ExpansionQuestNPCElias",
-            "Posicion": [6117, 0, 7004],
+            "Posicion": [
+                6117,
+                0,
+                7004
+            ],
             "Orientacion": 0,
             "Equipo": "SurvivorLoadout"
         },
         "PuntosTesoro": [
-            [7911, 0, 8864], [4627, 0, 7507], [1849, 0, 8830], [3614, 0, 6360],
-            [6924, 0, 5473], [4522, 0, 4370], [4539, 0, 2317], [4658, 0, 1414],
-            [7630, 0, 3717], [10179, 0, 4722], [6055, 0, 13429]
+            [
+                7911,
+                0,
+                8864
+            ],
+            [
+                4627,
+                0,
+                7507
+            ],
+            [
+                1849,
+                0,
+                8830
+            ],
+            [
+                3614,
+                0,
+                6360
+            ],
+            [
+                6924,
+                0,
+                5473
+            ],
+            [
+                4522,
+                0,
+                4370
+            ],
+            [
+                4539,
+                0,
+                2317
+            ],
+            [
+                4658,
+                0,
+                1414
+            ],
+            [
+                7630,
+                0,
+                3717
+            ],
+            [
+                10179,
+                0,
+                4722
+            ],
+            [
+                6055,
+                0,
+                13429
+            ]
         ],
         "RecompensaTesoro": 2500,
         "RecompensaPieles": 3000,

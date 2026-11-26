@@ -4,7 +4,7 @@
 #   3. Zonas donde no se puede construir + candados en vallas/puertas BBP
 #   4. NPCs de los traders
 #   5. Patrullas de bandidos (IA) en las zonas PvP
-#   6. Garaje de vehiculos
+#   6. Garaje de vehiculos y cantidad de zombis
 #   7. Quests propias: busqueda del tesoro, pieles y diarios
 # Hay que arrancar el servidor UNA vez antes (Expansion crea sus archivos por defecto) y
 # ejecutar esto con el servidor APAGADO. Se puede repetir cuantas veces quieras.
@@ -202,7 +202,7 @@ if (Test-Path $aiFile) {
 } else { Aviso "No existe $aiFile (Expansion AI no cargado?)." }
 
 # ======================================================================= 6) Garaje
-Titulo '6/7  Garaje de vehiculos'
+Titulo '6/7  Garaje de vehiculos y zombis'
 $garFile = Join-Path $AjustesPerfil 'GarageSettings.json'
 if (Test-Path $garFile) {
     $gar = Leer-Json $garFile
@@ -211,6 +211,65 @@ if (Test-Path $garFile) {
     Guardar-Json $gar $garFile
     Ok "Garaje: $(if ($zonas.Garaje.Activo) { 'activado' } else { 'desactivado' })"
 } else { Aviso "No existe $garFile." }
+
+# Zombis: siempre se calcula a partir de una copia del original, asi repetir el script no los multiplica otra vez
+$zb = $zonas.Zombis
+if ($zb) {
+    $factor = [double]$zb.Multiplicador
+    function Escalar([string]$v) { return [string][int][math]::Round([double]$v * $factor) }
+
+    $terrFile = Join-Path $Mision 'env\zombie_territories.xml'
+    $terrOrig = Join-Path $Mision 'env\zombie_territories.original.xml'
+    if (Test-Path $terrFile) {
+        if (-not (Test-Path $terrOrig)) { Copy-Item $terrFile $terrOrig }
+        $xmlT = New-Object System.Xml.XmlDocument
+        $xmlT.PreserveWhitespace = $true
+        $xmlT.Load($terrOrig)
+        $nZonas = 0
+        foreach ($zona in $xmlT.SelectNodes('//zone')) {
+            foreach ($a in 'smin', 'smax', 'dmin', 'dmax') {
+                if ($zona.HasAttribute($a)) { $zona.SetAttribute($a, (Escalar $zona.GetAttribute($a))) }
+            }
+            $nZonas++
+        }
+        $xmlT.Save($terrFile)
+        Ok "Zombis x$factor en $nZonas zonas del mapa"
+    } else { Aviso "No existe $terrFile" }
+
+    # Eventos de zombis (hordas en bases militares, etc.): solo se tocan los eventos Infected*
+    $evFile = Join-Path $Mision 'db\events.xml'
+    $evOrig = Join-Path $Mision 'db\events.original.xml'
+    if (Test-Path $evFile) {
+        if (-not (Test-Path $evOrig)) { Copy-Item $evFile $evOrig }
+        $orig = New-Object System.Xml.XmlDocument; $orig.Load($evOrig)
+        $actual = New-Object System.Xml.XmlDocument; $actual.PreserveWhitespace = $true; $actual.Load($evFile)
+        $nEv = 0
+        foreach ($e in $orig.SelectNodes("//event[starts-with(@name,'Infected')]")) {
+            $dest = $actual.SelectSingleNode("//event[@name='$($e.GetAttribute('name'))']")
+            if (-not $dest) { continue }
+            foreach ($campo in 'nominal', 'min', 'max') {
+                $o = $e.SelectSingleNode($campo); $d = $dest.SelectSingleNode($campo)
+                if ($o -and $d) { $d.InnerText = (Escalar $o.InnerText) }
+            }
+            $nEv++
+        }
+        Copia-Seguridad $evFile
+        $actual.Save($evFile)
+        Ok "Zombis x$factor en $nEv eventos de infectados"
+    }
+
+    $globFile = Join-Path $Mision 'db\globals.xml'
+    if (Test-Path $globFile) {
+        $glob = New-Object System.Xml.XmlDocument; $glob.PreserveWhitespace = $true; $glob.Load($globFile)
+        $var = $glob.SelectSingleNode("//var[@name='ZombieMaxCount']")
+        if ($var) {
+            Copia-Seguridad $globFile
+            $var.SetAttribute('value', [string][int]$zb.MaximoGlobal)
+            $glob.Save($globFile)
+            Ok "Maximo de zombis a la vez en el mapa: $($zb.MaximoGlobal)"
+        }
+    }
+}
 
 # ======================================================================= 7) Quests
 Titulo '7/7  Quests'
