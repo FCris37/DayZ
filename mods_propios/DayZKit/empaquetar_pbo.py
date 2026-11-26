@@ -1,11 +1,11 @@
-"""Empaqueta src/ en @LootPristine/addons/LootPristine.pbo (formato PBO sin comprimir).
+"""Empaqueta src/ en @DayZKit/addons/DayZKit.pbo (formato PBO sin comprimir).
 Uso: python empaquetar_pbo.py"""
 import hashlib, os, struct
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(AQUI, 'src')
-SALIDA = os.path.join(AQUI, '..', '@LootPristine', 'addons', 'LootPristine.pbo')
-PREFIJO = 'LootPristine'
+SALIDA = os.path.join(AQUI, '..', '@DayZKit', 'addons', 'DayZKit.pbo')
+PREFIJO = 'DayZKit'
 
 archivos = []
 for raiz, _, nombres in os.walk(SRC):

@@ -110,6 +110,116 @@ foreach ($par in @($listaMercados)) {
     }
 }
 
+# ======================================================================= 1b) Mercado central
+Titulo '1b    Mercado central'
+$lineasMercado = New-Object System.Collections.ArrayList
+$posAbe = $null
+$objetosFile = Join-Path $Servidor 'profiles\DayZKit\objetos.json'
+$mc = $zonas.Mercado
+if ($mc -and $mc.Activo) {
+    if (Es-Cero $mc.Centro) { throw 'El Mercado esta activo pero su Centro es 0,0,0.' }
+    $cx = [double]$mc.Centro[0]; $cy = [double]$mc.Centro[1]; $cz = [double]$mc.Centro[2]
+    $rad = [math]::PI / 180
+    function Norm([double]$a) { while ($a -gt 180) { $a -= 360 }; while ($a -le -180) { $a += 360 }; return $a }
+    function Sen([double]$g) { return [math]::Sin($g * $rad) }
+    function Cos_([double]$g) { return [math]::Cos($g * $rad) }
+    $objetos = New-Object System.Collections.ArrayList
+    function Obj([string]$clase, [double]$x, [double]$z, [double]$yaw, [double]$alt) {
+        [void]$objetos.Add([pscustomobject]@{ Clase = $clase; X = [math]::Round($x, 3); Z = [math]::Round($z, 3); Yaw = [math]::Round((Norm $yaw), 2); Altura = $alt })
+    }
+
+    # --- Traders combinados (uno por caseta)
+    function Crear-Combo([string]$archivo, [string]$nombre, $lista) {
+        $base = $null; $cats = New-Object System.Collections.ArrayList; $items = [pscustomobject]@{}
+        foreach ($t in $lista) {
+            $f = Join-Path $dirTraders "$t.json"
+            if (-not (Test-Path $f)) { Aviso "Caseta '$nombre': no existe el trader $t"; continue }
+            $tr = Leer-Json $f
+            if (-not $base) { $base = $tr }
+            foreach ($c in @($tr.Categories)) { if ($c -and -not $cats.Contains($c)) { [void]$cats.Add($c) } }
+            if ($tr.Items) { foreach ($p in $tr.Items.PSObject.Properties) { $items | Add-Member -NotePropertyName $p.Name -NotePropertyValue $p.Value -Force } }
+        }
+        if (-not $base) { return $false }
+        Poner $base 'DisplayName' $nombre
+        Poner $base 'Categories' @($cats)
+        Poner $base 'Items' $items
+        Guardar-Json $base (Join-Path $dirTraders "$archivo.json")
+        return $true
+    }
+
+    $casetas = @($mc.Casetas)
+    $n = $casetas.Count
+    $R = [double]$mc.Radio
+    for ($i = 0; $i -lt $n; $i++) {
+        $c = $casetas[$i]
+        $archivo = 'Mercado_' + ($c.Nombre -replace '[^A-Za-z0-9]', '')
+        if (-not (Crear-Combo $archivo $c.Nombre @($c.Traders))) { continue }
+        $theta = [double]$mc.Giro + $i * 360.0 / $n
+        $nx = $cx + $R * (Sen $theta); $nz = $cz + $R * (Cos_ $theta)
+        $yaw = Norm ($theta + 180)                      # el NPC mira al centro del mercado
+        $fx = Sen $yaw; $fz = Cos_ $yaw                 # hacia delante (clientes)
+        $rx = Sen ($yaw + 90); $rz = Cos_ ($yaw + 90)   # a su derecha
+        Obj 'StaticObj_Misc_Table_Market'   ($nx + $fx * 1.0) ($nz + $fz * 1.0) ($yaw - 180) 0.45
+        Obj 'bldr_mil_camonet_roof_nato'    ($nx + $fx * 0.6) ($nz + $fz * 0.6) ($yaw + 180) 1.31
+        Obj 'ExpansionPointLight'           ($nx + $fx * 0.6) ($nz + $fz * 0.6) 0 2.7
+        if ($c.Cartel) { Obj $c.Cartel      ($nx + $fx * 1.4 + $rx * 1.9) ($nz + $fz * 1.4 + $rz * 1.9) ($yaw + 180) 1.0 }
+        Obj 'StaticObj_Misc_WoodenCrate_3x' ($nx - $fx * 1.2 + $rx * 1.6) ($nz - $fz * 1.2 + $rz * 1.6) $yaw 0.67
+        Obj 'StaticObj_Misc_BoxWooden'      ($nx - $fx * 1.0 - $rx * 1.6) ($nz - $fz * 1.0 - $rz * 1.6) $yaw 0.45
+        $linea = "$($c.NPC).$archivo|$(Num $nx) $(Num $nz)|$(Num $yaw) 0 0"
+        if ($c.Ropa) { $linea += "|$($c.Ropa)" }
+        [void]$lineasMercado.Add($linea)
+        Ok ("Caseta {0}: {1}" -f $c.Nombre, (@($c.Traders) -join ' + '))
+    }
+
+    # --- Centro: bandera, maquina de cambio y NPC de quests
+    $g = [double]$mc.Giro
+    Obj 'ExpansionPropFlagExpansion' $cx $cz 0 7.66
+    $ex = $cx + 3 * (Sen $g); $ez = $cz + 3 * (Cos_ $g)
+    [void]$lineasMercado.Add("ExpansionExchangeMachine.Exchange|$(Num $ex) $(Num $ez)|$(Num (Norm ($g + 180))) 0 0")
+    Obj 'ExpansionSign_Trader_Exchange' ($ex + 1.8 * (Sen ($g + 90))) ($ez + 1.8 * (Cos_ ($g + 90))) ($g) 1.0
+    Obj 'ExpansionPointLight' $ex $ez 0 2.7
+    $posAbe = @(($cx + 3 * (Sen ($g + 180))), 0, ($cz + 3 * (Cos_ ($g + 180))))
+    Ok 'Centro: bandera, maquina de cambio y Abe el Cazatesoros'
+
+    Guardar-Json ([pscustomobject]@{ Objetos = @($objetos) }) $objetosFile
+    Ok "$($objetos.Count) objetos decorativos (los coloca el mod @DayZKit a ras de suelo)"
+
+    # --- Puntos de entrega de vehiculos comprados
+    $mkFile = Join-Path $AjustesMision 'MarketSettings.json'
+    if (Test-Path $mkFile) {
+        $mk = Leer-Json $mkFile
+        Copia-Seguridad $mkFile
+        function Puntos($cfg, [int]$cuantos, [double]$sep) {
+            $lista = New-Object System.Collections.ArrayList
+            if (-not $cfg) { return @() }
+            if ($cfg.Posicion) { [void]$lista.Add([pscustomobject]@{ Position = (Vec $cfg.Posicion); Orientation = @([double]$cfg.Orientacion, 0.0, 0.0) }); return @($lista) }
+            $a = $g + [double]$cfg.Angulo; $d = [double]$cfg.Distancia
+            $px = $cx + $d * (Sen $a); $pz = $cz + $d * (Cos_ $a)
+            for ($k = 0; $k -lt $cuantos; $k++) {
+                $o = ($k - ($cuantos - 1) / 2.0) * $sep
+                $x = $px + $o * (Sen ($a + 90)); $z = $pz + $o * (Cos_ ($a + 90))
+                [void]$lista.Add([pscustomobject]@{ Position = @([math]::Round($x, 2), [math]::Round($cy + 0.5, 2), [math]::Round($z, 2)); Orientation = @((Norm $a), 0.0, 0.0) })
+            }
+            return @($lista)
+        }
+        $land = @(Puntos $mc.EntregaCoches 3 7)
+        $air = @(Puntos $mc.EntregaHelicopteros 1 0)
+        $water = @(Puntos $mc.EntregaBarcas 1 0)
+        if ($land.Count) { Poner $mk 'LandSpawnPositions' $land }
+        if ($air.Count) { Poner $mk 'AirSpawnPositions' $air }
+        if ($water.Count) { Poner $mk 'WaterSpawnPositions' $water }
+        Guardar-Json $mk $mkFile
+        Ok "Entrega de vehiculos: $($land.Count) puntos de coches, $($air.Count) de helicopteros, $($water.Count) de barcas"
+        if (-not $water.Count) { Aviso 'Sin punto de entrega de barcas: no se podran comprar barcas (pon EntregaBarcas en zonas.json).' }
+    }
+
+    # La zona segura y la zona sin bases del mercado se tratan como un trader mas
+    $traders += [pscustomobject]@{ Nombre = 'Mercado central'; Centro = $mc.Centro; RadioZonaSegura = $mc.RadioZonaSegura; NPCs = @() }
+} else {
+    if (Test-Path $objetosFile) { Remove-Item $objetosFile }
+    Info 'Mercado central desactivado en config\zonas.json.'
+}
+
 # ======================================================================= 2) Zonas seguras
 Titulo '2/7  Zonas seguras (traders)'
 $safe = Leer-Json $safeFile
@@ -157,8 +267,9 @@ Ok 'Candados de Expansion permitidos en puertas BBP, vallas y tiendas'
 Titulo '4/7  NPCs de los traders'
 $mapFile = Join-Path $Mision 'expansion\traders\zonas_auto.map'
 $lineas = New-Object System.Collections.ArrayList
+foreach ($l in $lineasMercado) { [void]$lineas.Add($l) }
 foreach ($t in $traders) {
-    foreach ($n in $t.NPCs) {
+    foreach ($n in @($t.NPCs)) {
         if (-not (Test-Path (Join-Path $dirTraders "$($n.Trader).json"))) { Aviso "No existe Traders\$($n.Trader).json - revisa el nombre." }
         $pos = ($n.Posicion | ForEach-Object { Num $_ }) -join ' '
         $linea = "$($n.Clase).$($n.Trader)|$pos|$(Num $n.Orientacion) 0 0"
@@ -355,7 +466,7 @@ if (-not $q.Activo) {
 
     $npc = $q.NPC
     Guardar-Json ([pscustomobject]@{
-        ConfigVersion = 6; ID = 1; ClassName = $npc.Clase; Position = (Vec $npc.Posicion); Orientation = @([double]$npc.Orientacion, 0.0, 0.0)
+        ConfigVersion = 6; ID = 1; ClassName = $npc.Clase; Position = $(if ($posAbe) { Vec $posAbe } else { Vec $npc.Posicion }); Orientation = @([double]$npc.Orientacion, 0.0, 0.0)
         NPCName = $npc.Nombre; DefaultNPCText = 'Busco cosas perdidas de esta isla. Si encuentras algo, pagare bien.'
         Waypoints = @(); NPCEmoteID = 46; NPCEmoteIsStatic = 0; NPCLoadoutFile = $npc.Equipo
         NPCInteractionEmoteID = 1; NPCQuestCancelEmoteID = 60; NPCQuestStartEmoteID = 58; NPCQuestCompleteEmoteID = 39

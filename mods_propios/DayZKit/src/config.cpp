@@ -1,6 +1,6 @@
 class CfgPatches
 {
-	class LootPristine
+	class DayZKit
 	{
 		units[] = {};
 		weapons[] = {};
@@ -11,22 +11,27 @@ class CfgPatches
 
 class CfgMods
 {
-	class LootPristine
+	class DayZKit
 	{
-		dir = "LootPristine";
-		name = "LootPristine";
+		dir = "DayZKit";
+		name = "DayZKit";
 		author = "DayZKit";
-		version = "1.0";
+		version = "1.1";
 		type = "mod";
 		hideName = 1;
 		hidePicture = 1;
-		dependencies[] = {"World"};
+		dependencies[] = {"World", "Mission"};
 		class defs
 		{
 			class worldScriptModule
 			{
 				value = "";
-				files[] = {"LootPristine/scripts/4_World"};
+				files[] = {"DayZKit/scripts/4_World"};
+			};
+			class missionScriptModule
+			{
+				value = "";
+				files[] = {"DayZKit/scripts/5_Mission"};
 			};
 		};
 	};

@@ -218,11 +218,11 @@
         },
         {
             "Id": "0",
-            "Carpeta": "@LootPristine",
+            "Carpeta": "@DayZKit",
             "Tipo": "servidor",
             "Activo": true,
-            "Local": "mods_propios\\@LootPristine",
-            "Nota": "Mod propio (carpeta mods_propios): el loot aparece siempre en estado perfecto. Solo servidor, los jugadores no lo descargan."
+            "Local": "mods_propios\\@DayZKit",
+            "Nota": "Mod propio (carpeta mods_propios): loot siempre en perfecto estado y objetos del mercado colocados a ras de suelo. Solo servidor."
         }
     ]
 }
