@@ -53,7 +53,7 @@ Abre `config/ajustes.json` y revisa:
 
 | Campo | Qué es |
 |---|---|
-| `CarpetaServidor` | Dónde se instala el servidor (por defecto `C:\DayZServer`) |
+| `CarpetaServidor` | Dónde se instala el servidor (por defecto `C:\DayZServerDeerIsle`) |
 | `CarpetaSteamCMD` | Dónde se instala SteamCMD (por defecto `C:\SteamCMD`) |
 | `UsuarioSteam` | Tu usuario de inicio de sesión de Steam. Si lo dejas vacío, te lo pregunta. |
 | `PasswordAdmin` | Vacío = se genera una aleatoria y se guarda en `password_admin.txt` dentro del servidor |
