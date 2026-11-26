@@ -1,7 +1,7 @@
 // Coloca objetos decorativos (casetas del mercado, carteles, luces...) leidos de
-// $profile:DayZKit\objetos.json. Cada objeto se pone a ras de suelo (SurfaceY) mas su
-// "Altura", asi que solo hacen falta X y Z. No se guardan en la persistencia: se
-// vuelven a crear en cada arranque.
+// $profile:DayZKit\objetos.json. Cada objeto se apoya en el suelo por la parte de abajo de
+// su modelo (caja de colision) y se eleva "Altura" metros mas, asi que solo hacen falta X y Z.
+// No se guardan en la persistencia: se vuelven a crear en cada arranque.
 
 class DayZKit_Objeto
 {
@@ -44,15 +44,25 @@ modded class MissionServer
 		int creados = 0;
 		foreach (DayZKit_Objeto o : lista.Objetos)
 		{
-			vector pos = Vector(o.X, GetGame().SurfaceY(o.X, o.Z) + o.Altura, o.Z);
+			float suelo = GetGame().SurfaceY(o.X, o.Z);
+			vector pos = Vector(o.X, suelo + o.Altura, o.Z);
 			Object obj = GetGame().CreateObjectEx(o.Clase, pos, ECE_CREATEPHYSICS | ECE_NOLIFETIME | ECE_KEEPHEIGHT | ECE_NOPERSISTENCY_WORLD);
 			if (!obj)
 			{
 				Print("[DayZKit] No se pudo crear " + o.Clase);
 				continue;
 			}
-			obj.SetPosition(pos);
 			obj.SetOrientation(Vector(o.Yaw, 0, 0));
+
+			// Apoyar la parte de abajo del modelo en el suelo
+			vector caja[2];
+			float baseModelo = 0;
+			if (obj.GetCollisionBox(caja))
+				baseModelo = -caja[0][1];
+			else if (obj.ClippingInfo(caja) > 0)
+				baseModelo = -caja[0][1];
+			pos[1] = suelo + baseModelo + o.Altura;
+			obj.SetPosition(pos);
 			obj.Update();
 			EntityAI ent = EntityAI.Cast(obj);
 			if (ent)

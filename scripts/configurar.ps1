@@ -147,39 +147,43 @@ if ($mc -and $mc.Activo) {
         return $true
     }
 
+    # Casetas en forma de U: repartidas por el circulo dejando libre un hueco de
+    # "AperturaEntrada" grados hacia la direccion "Entrada" (0 = norte, 90 = este).
     $casetas = @($mc.Casetas)
     $n = $casetas.Count
     $R = [double]$mc.Radio
+    $g = [double]$mc.Entrada
+    $ap = [double]$mc.AperturaEntrada
+    $techo = $mc.Techo
     for ($i = 0; $i -lt $n; $i++) {
         $c = $casetas[$i]
         $archivo = 'Mercado_' + ($c.Nombre -replace '[^A-Za-z0-9]', '')
         if (-not (Crear-Combo $archivo $c.Nombre @($c.Traders))) { continue }
-        $theta = [double]$mc.Giro + $i * 360.0 / $n
+        if ($n -gt 1) { $theta = $g + $ap / 2 + $i * (360.0 - $ap) / ($n - 1) } else { $theta = $g + 180 }
         $nx = $cx + $R * (Sen $theta); $nz = $cz + $R * (Cos_ $theta)
         $yaw = Norm ($theta + 180)                      # el NPC mira al centro del mercado
         $fx = Sen $yaw; $fz = Cos_ $yaw                 # hacia delante (clientes)
         $rx = Sen ($yaw + 90); $rz = Cos_ ($yaw + 90)   # a su derecha
-        Obj 'StaticObj_Misc_Table_Market'   ($nx + $fx * 1.0) ($nz + $fz * 1.0) ($yaw - 180) 0.45
-        Obj 'bldr_mil_camonet_roof_nato'    ($nx + $fx * 0.6) ($nz + $fz * 0.6) ($yaw + 180) 1.31
-        Obj 'ExpansionPointLight'           ($nx + $fx * 0.6) ($nz + $fz * 0.6) 0 2.7
-        if ($c.Cartel) { Obj $c.Cartel      ($nx + $fx * 1.4 + $rx * 1.9) ($nz + $fz * 1.4 + $rz * 1.9) ($yaw + 180) 1.0 }
-        Obj 'StaticObj_Misc_WoodenCrate_3x' ($nx - $fx * 1.2 + $rx * 1.6) ($nz - $fz * 1.2 + $rz * 1.6) $yaw 0.67
-        Obj 'StaticObj_Misc_BoxWooden'      ($nx - $fx * 1.0 - $rx * 1.6) ($nz - $fz * 1.0 - $rz * 1.6) $yaw 0.45
+        if ($techo) {
+            # Un tejado sobre el vendedor y el mostrador, y otro delante para los clientes
+            Obj $techo ($nx + $fx * 0.4) ($nz + $fz * 0.4) $yaw 0
+            Obj $techo ($nx + $fx * 3.0) ($nz + $fz * 3.0) $yaw 0
+        }
+        Obj 'StaticObj_Misc_Table_Market'   ($nx + $fx * 1.0) ($nz + $fz * 1.0) ($yaw - 180) 0
+        Obj 'ExpansionPointLight'           ($nx + $fx * 1.0) ($nz + $fz * 1.0) 0 2.3
+        if ($c.Cartel) { Obj $c.Cartel      ($nx + $fx * 1.6 + $rx * 2.6) ($nz + $fz * 1.6 + $rz * 2.6) ($yaw + 180) 0 }
+        Obj 'StaticObj_Misc_WoodenCrate_3x' ($nx - $fx * 0.8 + $rx * 1.6) ($nz - $fz * 0.8 + $rz * 1.6) $yaw 0
+        Obj 'StaticObj_Misc_BoxWooden'      ($nx - $fx * 0.8 - $rx * 1.6) ($nz - $fz * 0.8 - $rz * 1.6) $yaw 0
         $linea = "$($c.NPC).$archivo|$(Num $nx) $(Num $nz)|$(Num $yaw) 0 0"
         if ($c.Ropa) { $linea += "|$($c.Ropa)" }
         [void]$lineasMercado.Add($linea)
         Ok ("Caseta {0}: {1}" -f $c.Nombre, (@($c.Traders) -join ' + '))
     }
 
-    # --- Centro: bandera, maquina de cambio y NPC de quests
-    $g = [double]$mc.Giro
-    Obj 'ExpansionPropFlagExpansion' $cx $cz 0 7.66
-    $ex = $cx + 3 * (Sen $g); $ez = $cz + 3 * (Cos_ $g)
-    [void]$lineasMercado.Add("ExpansionExchangeMachine.Exchange|$(Num $ex) $(Num $ez)|$(Num (Norm ($g + 180))) 0 0")
-    Obj 'ExpansionSign_Trader_Exchange' ($ex + 1.8 * (Sen ($g + 90))) ($ez + 1.8 * (Cos_ ($g + 90))) ($g) 1.0
-    Obj 'ExpansionPointLight' $ex $ez 0 2.7
-    $posAbe = @(($cx + 3 * (Sen ($g + 180))), 0, ($cz + 3 * (Cos_ ($g + 180))))
-    Ok 'Centro: bandera, maquina de cambio y Abe el Cazatesoros'
+    # --- Centro: bandera (al fondo, opuesta a la entrada) y Abe el Cazatesoros mirando a la entrada
+    Obj 'ExpansionPropFlagExpansion' ($cx + 3 * (Sen ($g + 180))) ($cz + 3 * (Cos_ ($g + 180))) $g 0
+    $posAbe = @(($cx + 1 * (Sen $g)), 0, ($cz + 1 * (Cos_ $g)))
+    Ok "Centro: bandera y Abe el Cazatesoros (entrada hacia $g grados)"
 
     Guardar-Json ([pscustomobject]@{ Objetos = @($objetos) }) $objetosFile
     Ok "$($objetos.Count) objetos decorativos (los coloca el mod @DayZKit a ras de suelo)"
@@ -192,9 +196,13 @@ if ($mc -and $mc.Activo) {
         function Puntos($cfg, [int]$cuantos, [double]$sep) {
             $lista = New-Object System.Collections.ArrayList
             if (-not $cfg) { return @() }
-            if ($cfg.Posicion) { [void]$lista.Add([pscustomobject]@{ Position = (Vec $cfg.Posicion); Orientation = @([double]$cfg.Orientacion, 0.0, 0.0) }); return @($lista) }
-            $a = $g + [double]$cfg.Angulo; $d = [double]$cfg.Distancia
-            $px = $cx + $d * (Sen $a); $pz = $cz + $d * (Cos_ $a)
+            if ($cfg.Posicion) {
+                # Punto fijo: las plazas se reparten en fila, perpendiculares a la Orientacion
+                $a = [double]$cfg.Orientacion; $px = [double]$cfg.Posicion[0]; $pz = [double]$cfg.Posicion[2]; $cy = [double]$cfg.Posicion[1]
+            } else {
+                $a = [double]$cfg.Angulo; $d = [double]$cfg.Distancia
+                $px = $cx + $d * (Sen $a); $pz = $cz + $d * (Cos_ $a)
+            }
             for ($k = 0; $k -lt $cuantos; $k++) {
                 $o = ($k - ($cuantos - 1) / 2.0) * $sep
                 $x = $px + $o * (Sen ($a + 90)); $z = $pz + $o * (Cos_ ($a + 90))
@@ -202,7 +210,7 @@ if ($mc -and $mc.Activo) {
             }
             return @($lista)
         }
-        $land = @(Puntos $mc.EntregaCoches 3 7)
+        $land = @(Puntos $mc.EntregaCoches ([int]$(if ($mc.EntregaCoches.Plazas) { $mc.EntregaCoches.Plazas } else { 3 })) 7)
         $air = @(Puntos $mc.EntregaHelicopteros 1 0)
         $water = @(Puntos $mc.EntregaBarcas 1 0)
         if ($land.Count) { Poner $mk 'LandSpawnPositions' $land }
@@ -466,7 +474,7 @@ if (-not $q.Activo) {
 
     $npc = $q.NPC
     Guardar-Json ([pscustomobject]@{
-        ConfigVersion = 6; ID = 1; ClassName = $npc.Clase; Position = $(if ($posAbe) { Vec $posAbe } else { Vec $npc.Posicion }); Orientation = @([double]$npc.Orientacion, 0.0, 0.0)
+        ConfigVersion = 6; ID = 1; ClassName = $npc.Clase; Position = $(if ($posAbe) { Vec $posAbe } else { Vec $npc.Posicion }); Orientation = @($(if ($posAbe) { [double]$zonas.Mercado.Entrada } else { [double]$npc.Orientacion }), 0.0, 0.0)
         NPCName = $npc.Nombre; DefaultNPCText = 'Busco cosas perdidas de esta isla. Si encuentras algo, pagare bien.'
         Waypoints = @(); NPCEmoteID = 46; NPCEmoteIsStatic = 0; NPCLoadoutFile = $npc.Equipo
         NPCInteractionEmoteID = 1; NPCQuestCancelEmoteID = 60; NPCQuestStartEmoteID = 58; NPCQuestCompleteEmoteID = 39

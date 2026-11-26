@@ -4,15 +4,17 @@
     "DistanciaMinimaBasesAPvP": 500,
     "DistanciaMinimaBasesATraders": 300,
     "Mercado": {
-        "_info": "Mercado central: casetas en circulo alrededor de Centro, cada una con puesto, toldo, cartel, luz, cajas y un NPC estatico mirando al centro. En el centro: bandera, maquina de cambio y Abe (quests). Solo hace falta X y Z del centro (la Y se usa para la zona segura y los puntos de entrega). Giro = rota todo el mercado (grados). Las entregas son donde aparecen los vehiculos comprados: Distancia y Angulo desde el centro (0 = norte, 90 = este), o una Posicion fija [X,Y,Z] y Orientacion.",
+        "_info": "Mercado central: casetas en forma de U alrededor de Centro, dejando libre un hueco de AperturaEntrada grados hacia Entrada (0 = norte, 90 = este). Cada caseta: dos tejados (Techo), puesto, cartel, luz, cajas y un NPC estatico mirando al centro. En el centro: bandera y Abe (quests). Entregas = donde aparecen los vehiculos comprados: Posicion fija [X,Y,Z] + Orientacion (hacia donde miran) + Plazas, o Distancia y Angulo desde el centro.",
         "Activo": true,
         "Centro": [
             5407.757812,
             14.747427,
             4963.506836
         ],
-        "Radio": 14,
-        "Giro": 0,
+        "Radio": 16,
+        "Entrada": 90,
+        "AperturaEntrada": 110,
+        "Techo": "Land_Misc_TrailRoof_Big",
         "RadioZonaSegura": 150,
         "Casetas": [
             {
@@ -77,11 +79,21 @@
                     "Fishing"
                 ],
                 "Ropa": ""
+            },
+            {
+                "Nombre": "Banco",
+                "NPC": "ExpansionTraderMirek",
+                "Cartel": "ExpansionSign_Trader_Exchange",
+                "Traders": [
+                    "Exchange"
+                ],
+                "Ropa": ""
             }
         ],
         "EntregaCoches": {
-            "Distancia": 32,
-            "Angulo": 90
+            "Distancia": 45,
+            "Angulo": 90,
+            "Plazas": 4
         },
         "EntregaHelicopteros": {
             "Distancia": 75,
