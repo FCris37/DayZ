@@ -158,7 +158,8 @@ if ($mc -and $mc.Activo) {
     for ($i = 0; $i -lt $n; $i++) {
         $c = $casetas[$i]
         $archivo = 'Mercado_' + ($c.Nombre -replace '[^A-Za-z0-9]', '')
-        if (-not (Crear-Combo $archivo $c.Nombre @($c.Traders))) { continue }
+        $titulo = if ($c.Titulo) { $c.Titulo } else { $c.Nombre }
+        if (-not (Crear-Combo $archivo $titulo @($c.Traders))) { continue }
         if ($n -gt 1) { $theta = $g + $ap / 2 + $i * (360.0 - $ap) / ($n - 1) } else { $theta = $g + 180 }
         $nx = $cx + $R * (Sen $theta); $nz = $cz + $R * (Cos_ $theta)
         $yaw = Norm ($theta + 180)                      # el NPC mira al centro del mercado
@@ -174,9 +175,9 @@ if ($mc -and $mc.Activo) {
         if ($c.Cartel) { Obj $c.Cartel      ($nx + $fx * 1.6 + $rx * 2.6) ($nz + $fz * 1.6 + $rz * 2.6) ($yaw + 180) 0 }
         Obj 'StaticObj_Misc_WoodenCrate_3x' ($nx - $fx * 0.8 + $rx * 1.6) ($nz - $fz * 0.8 + $rz * 1.6) $yaw 0
         Obj 'StaticObj_Misc_BoxWooden'      ($nx - $fx * 0.8 - $rx * 1.6) ($nz - $fz * 0.8 - $rz * 1.6) $yaw 0
-        $linea = "$($c.NPC).$archivo|$(Num $nx) $(Num $nz)|$(Num $yaw) 0 0"
-        if ($c.Ropa) { $linea += "|$($c.Ropa)" }
-        [void]$lineasMercado.Add($linea)
+        # El NPC muestra el nombre de la caseta en espanol (palabra clave name: de Expansion)
+        $equipo = @(); if ($c.Ropa) { $equipo += $c.Ropa }; $equipo += "name:$titulo"
+        [void]$lineasMercado.Add("$($c.NPC).$archivo|$(Num $nx) $(Num $nz)|$(Num $yaw) 0 0|$($equipo -join ',')")
         Ok ("Caseta {0}: {1}" -f $c.Nombre, (@($c.Traders) -join ' + '))
     }
 
@@ -507,6 +508,33 @@ if ($jg -and $jg.Minimapa -and (Test-Path $mapFile)) {
     }
     Guardar-Json $mp $mapFile
     Ok 'Minimapa y brujula sin necesitar objetos (se activan con su tecla)'
+}
+
+# --- Marcadores en el mapa (en espanol): mercado, aparcamiento, helipuerto y zonas PvP
+if (Test-Path $mapFile) {
+    $mp = Leer-Json $mapFile
+    $marc = New-Object System.Collections.ArrayList
+    foreach ($m in @($mp.ServerMarkers)) { if ($m -and -not "$($m.m_UID)".StartsWith('DayZKit_')) { [void]$marc.Add($m) } }
+    function Marcador([string]$id, [string]$texto, [string]$icono, [int]$color, $pos, [int]$vis) {
+        [void]$marc.Add([pscustomobject]@{ m_UID = "DayZKit_$id"; m_Visibility = $vis; m_Is3D = 1; m_Text = $texto; m_IconName = $icono; m_Color = $color; m_Position = (Vec $pos); m_Locked = 1; m_Persist = 1 })
+    }
+    $verde = -13710223; $rojo = -1618884; $azul = -13331237
+    if ($zonas.Mercado -and $zonas.Mercado.Activo) {
+        $mc = $zonas.Mercado
+        Marcador 'Mercado' 'Mercado central' 'Trader' $verde $mc.Centro 6
+        if ($mc.EntregaCoches -and $mc.EntregaCoches.Desde) {
+            $d1 = $mc.EntregaCoches.Desde; $d2 = $mc.EntregaCoches.Hasta
+            Marcador 'Aparcamiento' 'Aparcamiento' 'Car' $azul @((([double]$d1[0] + [double]$d2[0]) / 2), [double]$d1[1], (([double]$d1[2] + [double]$d2[2]) / 2)) 4
+        }
+        if ($mc.EntregaHelicopteros -and $mc.EntregaHelicopteros.Posicion) { Marcador 'Helipuerto' 'Helipuerto' 'Helicopter' $azul $mc.EntregaHelicopteros.Posicion 4 }
+    }
+    $k = 0
+    foreach ($z in $pvp) { $k++; Marcador "PvP$k" ("Zona PvP - " + ($z.Nombre -replace '^PvP\s*-\s*', '')) 'Skull' $rojo $z.Centro 4 }
+    Poner $mp 'EnableServerMarkers' 1
+    Poner $mp 'ShowNameOnServerMarkers' 1
+    Poner $mp 'ServerMarkers' @($marc)
+    Guardar-Json $mp $mapFile
+    Ok "Marcadores en el mapa: $(@($marc | Where-Object { "$($_.m_UID)".StartsWith('DayZKit_') }).Count)"
 }
 
 # --- Stamina infinita (cfggameplay.json de la mision)
