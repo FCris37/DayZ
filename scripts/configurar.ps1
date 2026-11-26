@@ -172,7 +172,18 @@ if ($mc -and $mc.Activo) {
         }
         Obj 'StaticObj_Misc_Table_Market'   ($nx + $fx * 1.0) ($nz + $fz * 1.0) ($yaw - 180) 0
         Obj 'ExpansionPointLight'           ($nx + $fx * 1.0) ($nz + $fz * 1.0) 0 2.3
-        if ($c.Cartel) { Obj $c.Cartel      ($nx + $fx * 1.6 + $rx * 2.6) ($nz + $fz * 1.6 + $rz * 2.6) ($yaw + 180) 0 }
+        if ($c.Cartel -and $mc.Carteles -ne $false) { Obj $c.Cartel ($nx + $fx * 1.6 + $rx * 2.6) ($nz + $fz * 1.6 + $rz * 2.6) ($yaw + 180) 0 }
+        # Exposicion: objetos fijos (no se pueden coger) sobre el mostrador y en el suelo junto al vendedor
+        $expo = @($c.Exposicion | Where-Object { $_ })
+        for ($k = 0; $k -lt $expo.Count; $k++) {
+            $o = if ($expo.Count -gt 1) { -0.8 + 1.6 * $k / ($expo.Count - 1) } else { 0 }
+            Obj $expo[$k] ($nx + $fx * 1.0 + $rx * $o) ($nz + $fz * 1.0 + $rz * $o) ($yaw + 90 + 25 * (($k % 3) - 1)) 0.9
+        }
+        $suelo = @($c.Suelo | Where-Object { $_ })
+        for ($k = 0; $k -lt [math]::Min(2, $suelo.Count); $k++) {
+            $lado = if ($k -eq 0) { 1 } else { -1 }
+            Obj $suelo[$k] ($nx + $rx * 1.1 * $lado - $fx * 0.1) ($nz + $rz * 1.1 * $lado - $fz * 0.1) ($yaw + 30 * $lado) 0
+        }
         Obj 'StaticObj_Misc_WoodenCrate_3x' ($nx - $fx * 0.8 + $rx * 1.6) ($nz - $fz * 0.8 + $rz * 1.6) $yaw 0
         Obj 'StaticObj_Misc_BoxWooden'      ($nx - $fx * 0.8 - $rx * 1.6) ($nz - $fz * 0.8 - $rz * 1.6) $yaw 0
         # El NPC muestra el nombre de la caseta en espanol (palabra clave name: de Expansion)

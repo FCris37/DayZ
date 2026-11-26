@@ -4,7 +4,7 @@
     "DistanciaMinimaBasesAPvP": 500,
     "DistanciaMinimaBasesATraders": 300,
     "Mercado": {
-        "_info": "Mercado central: casetas en forma de U alrededor de Centro, dejando libre un hueco de AperturaEntrada grados hacia Entrada (0 = norte, 90 = este). Cada caseta: dos tejados (Techo), puesto, cartel, luz, cajas y un NPC estatico mirando al centro. En el centro: bandera y Abe (quests). Entregas = donde aparecen los vehiculos comprados: Posicion fija [X,Y,Z] + Orientacion (hacia donde miran) + Plazas, o Distancia y Angulo desde el centro. Entregas con Desde/Hasta: fila de plazas entre los dos puntos (una cada ~7 m, o las que diga Plazas), mirando al mercado. Decoracion=true anade farolas, palets, flores, bancos, fuego, mesa y luces del helipuerto.",
+        "_info": "Mercado central: casetas en forma de U alrededor de Centro, dejando libre un hueco de AperturaEntrada grados hacia Entrada (0 = norte, 90 = este). Cada caseta: dos tejados (Techo), puesto, cartel, luz, cajas y un NPC estatico mirando al centro. En el centro: bandera y Abe (quests). Entregas = donde aparecen los vehiculos comprados: Posicion fija [X,Y,Z] + Orientacion (hacia donde miran) + Plazas, o Distancia y Angulo desde el centro. Entregas con Desde/Hasta: fila de plazas entre los dos puntos (una cada ~7 m, o las que diga Plazas), mirando al mercado. Decoracion=true anade farolas, palets, flores, bancos, fuego, mesa y luces del helipuerto. Carteles=false quita los carteles de Expansion (estan en ingles). Exposicion = objetos fijos sobre el mostrador (hasta ~6); Suelo = hasta 2 objetos fijos junto al vendedor.",
         "Activo": true,
         "Centro": [
             5407.757812,
@@ -15,6 +15,7 @@
         "Entrada": 90,
         "AperturaEntrada": 110,
         "Techo": "Land_Misc_TrailRoof_Big",
+        "Carteles": true,
         "RadioZonaSegura": 150,
         "Casetas": [
             {
@@ -27,7 +28,18 @@
                     "Attachments",
                     "Special"
                 ],
-                "Ropa": "HunterPants_Spring,HuntingJacket_Summer,CombatBoots_Green"
+                "Ropa": "HunterPants_Spring,HuntingJacket_Summer,CombatBoots_Green",
+                "Exposicion": [
+                    "bldr_FAL",
+                    "bldr_Mosin9130",
+                    "bldr_Mag_STANAG_30Rnd",
+                    "bldr_prop_AmmoBox_556x45_20Rnd",
+                    "bldr_CZ75",
+                    "bldr_prop_M67Grenade"
+                ],
+                "Suelo": [
+                    "ExpansionPropCase2"
+                ]
             },
             {
                 "Nombre": "Suministros",
@@ -38,7 +50,18 @@
                     "Consumables",
                     "Medicals"
                 ],
-                "Ropa": ""
+                "Ropa": "",
+                "Exposicion": [
+                    "bldr_BakedBeansCan",
+                    "bldr_PeachesCan",
+                    "bldr_WaterBottle",
+                    "bldr_prop_FirstAidKit",
+                    "bldr_prop_BloodBagFull",
+                    "bldr_Apple"
+                ],
+                "Suelo": [
+                    "bldr_Pot"
+                ]
             },
             {
                 "Nombre": "Ropa y equipo",
@@ -49,7 +72,18 @@
                     "Clothing",
                     "Clothing_Accessories"
                 ],
-                "Ropa": ""
+                "Ropa": "",
+                "Exposicion": [
+                    "bldr_prop_HuntingJacket_Autumn",
+                    "bldr_prop_CargoPants_Grey",
+                    "bldr_prop_BaseballCap_Black",
+                    "bldr_prop_CombatBoots_Black",
+                    "bldr_prop_DirtBikeHelmet_Red"
+                ],
+                "Suelo": [
+                    "bldr_prop_AliceBag_Green",
+                    "bldr_prop_MountainBag_Orange"
+                ]
             },
             {
                 "Nombre": "Construccion",
@@ -60,7 +94,18 @@
                     "BuildingSupplies",
                     "Components"
                 ],
-                "Ropa": ""
+                "Ropa": "",
+                "Exposicion": [
+                    "ExpansionPropHammer",
+                    "bldr_prop_NailBox",
+                    "bldr_prop_Hacksaw",
+                    "ExpansionPropPliersSet1",
+                    "bldr_expansion_code_lock"
+                ],
+                "Suelo": [
+                    "ExpansionPropToolChest",
+                    "bldr_prop_WoodenPlank"
+                ]
             },
             {
                 "Nombre": "Concesionario",
@@ -73,7 +118,18 @@
                     "Aircraft",
                     "Boats"
                 ],
-                "Ropa": ""
+                "Ropa": "",
+                "Exposicion": [
+                    "ExpansionPropBattery1",
+                    "ExpansionPropCarFilter",
+                    "ExpansionPropScrewdriver1",
+                    "ExpansionPropSprayCan",
+                    "ExpansionPropGloves"
+                ],
+                "Suelo": [
+                    "ExpansionPropCarJack",
+                    "StaticObj_Furniture_canister_DZ"
+                ]
             },
             {
                 "Nombre": "Coleccionista",
@@ -84,7 +140,18 @@
                     "Coleccionista",
                     "Fishing"
                 ],
-                "Ropa": ""
+                "Ropa": "",
+                "Exposicion": [
+                    "bldr_prop_BookYouth",
+                    "bldr_BoxCerealCrunchin",
+                    "bldr_prop_LeatherSack_Natural",
+                    "bldr_prop_RabbitPelt",
+                    "bldr_prop_Matchbox"
+                ],
+                "Suelo": [
+                    "ExpansionPropTackleBox1",
+                    "bldr_prop_DeerPelt"
+                ]
             },
             {
                 "Nombre": "Banco",
@@ -94,7 +161,16 @@
                 "Traders": [
                     "Exchange"
                 ],
-                "Ropa": ""
+                "Ropa": "",
+                "Exposicion": [
+                    "bldr_expansion_goldbar",
+                    "bldr_expansion_goldnugget",
+                    "bldr_expansion_silvernugget",
+                    "bldr_expansion_goldbar"
+                ],
+                "Suelo": [
+                    "bldr_expansion_safe2"
+                ]
             }
         ],
         "EntregaCoches": {
