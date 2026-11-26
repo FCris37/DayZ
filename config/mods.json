@@ -40,8 +40,8 @@
             "Id": "3171576913",
             "Carpeta": "@MuchFramework",
             "Tipo": "cliente",
-            "Activo": true,
-            "Nota": "Requisito de MuchStuffPack. ID sacado de su historial de cambios: compruebalo en el Workshop."
+            "Activo": false,
+            "Nota": "Requisito de MuchStuffPack. ID sacado de su historial de cambios: compruebalo en el Workshop. DESACTIVADO: con la version actual de DayZ da 'Compile error' en MuchFramework (m_ElapsedSinceLastUpdate)."
         },
         {
             "Id": "1710977250",
@@ -64,7 +64,7 @@
             "Id": "1991570984",
             "Carpeta": "@MuchStuffPack",
             "Tipo": "cliente",
-            "Activo": true,
+            "Activo": false,
             "TiposCE": true,
             "Mercado": {
                 "Archivo": "MSP_Muebles",
@@ -75,7 +75,7 @@
                 "PrecioMin": 200,
                 "PrecioMax": 800
             },
-            "Nota": "Muebles, taquillas y almacenaje para la base. Su autor ya no lo actualiza (funciona, pero sin parches nuevos)."
+            "Nota": "Muebles, taquillas y almacenaje para la base. Su autor ya no lo actualiza (funciona, pero sin parches nuevos). DESACTIVADO: con la version actual de DayZ da 'Compile error' en MuchFramework (m_ElapsedSinceLastUpdate)."
         },
         {
             "Id": "2927929000",
