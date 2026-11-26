@@ -155,25 +155,34 @@ $cambios = $false
 foreach ($m in ($mods | Where-Object { $_.TiposCE })) {
     $carpetaMod = Join-Path $Servidor $m.Carpeta
     if (-not (Test-Path $carpetaMod)) { continue }
-    # El types.xml suele venir en una carpeta tipo "Extras" o "ServerFiles". Elegimos el de ruta mas corta.
-    $tipos = Get-ChildItem $carpetaMod -Recurse -File -Filter '*.xml' -ErrorAction SilentlyContinue |
-        Where-Object { $_.Name -match '(?i)^(.*[_\-\s])?types\.xml$' -and $_.Name -notmatch '(?i)spawnable' } |
+    # Los types.xml suelen venir en una carpeta tipo "Extras" o "ServerFiles". Se elige la carpeta del de ruta
+    # mas corta y se registran TODOS los types de esa carpeta (p. ej. BBP trae Crafted_Types y Loot_Types).
+    $candidatos = @(Get-ChildItem $carpetaMod -Recurse -File -Filter '*.xml' -ErrorAction SilentlyContinue |
+        Where-Object { $_.Name -match '(?i)types\.xml$' -and $_.Name -notmatch '(?i)spawnable' } |
         Where-Object { (Get-Content $_.FullName -TotalCount 20 -ErrorAction SilentlyContinue) -match '<types' } |
-        Sort-Object { $_.FullName.Length } | Select-Object -First 1
-    if (-not $tipos) {
+        Sort-Object { $_.FullName.Length })
+    if ($candidatos.Count -eq 0) {
         Aviso "$($m.Carpeta): no trae types.xml. Sus objetos funcionaran, pero no apareceran como loot."
         continue
     }
+    $dirTipos = $candidatos[0].DirectoryName
+    $tipos = @($candidatos | Where-Object { $_.DirectoryName -eq $dirTipos } | Sort-Object Name)
     $nombre = $m.Carpeta.TrimStart('@')
     $destino = Join-Path $Mision "mods_ce\$nombre"
+    if (Test-Path $destino) { Remove-Item $destino -Recurse -Force }
     New-Item -ItemType Directory -Force -Path $destino | Out-Null
-    Copy-Item $tipos.FullName (Join-Path $destino 'types.xml') -Force
-    if ($texto -notmatch [regex]::Escape("folder=""mods_ce/$nombre""")) {
-        $bloque = "`t<ce folder=""mods_ce/$nombre"">`r`n`t`t<file name=""types.xml"" type=""types"" />`r`n`t</ce>`r`n</economycore>"
-        $texto = $texto -replace '</economycore>', $bloque
-        $cambios = $true
+    $lineas = ''
+    foreach ($t in $tipos) {
+        Copy-Item $t.FullName (Join-Path $destino $t.Name) -Force
+        $lineas += "`t`t<file name=""$($t.Name)"" type=""types"" />`r`n"
     }
-    Ok "$($m.Carpeta): types.xml registrado ($($tipos.FullName.Substring($carpetaMod.Length + 1)))"
+    # Sustituye el registro anterior de este mod (si lo habia) por el nuevo
+    $patron = '(?s)\s*<ce folder="mods_ce/' + [regex]::Escape($nombre) + '">.*?</ce>'
+    $texto = [regex]::Replace($texto, $patron, '')
+    $bloque = "`r`n`t<ce folder=""mods_ce/$nombre"">`r`n$lineas`t</ce>`r`n</economycore>"
+    $texto = $texto -replace '\s*</economycore>', $bloque
+    $cambios = $true
+    Ok "$($m.Carpeta): $($tipos.Count) types registrados ($(($tipos | ForEach-Object { $_.Name }) -join ', '))"
 }
 if ($cambios) { Copia-Seguridad $core; Guardar-Texto $texto $core }
 

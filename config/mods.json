@@ -81,7 +81,7 @@
             "Id": "2927929000",
             "Carpeta": "@RetroCollectibles",
             "Tipo": "cliente",
-            "Activo": true,
+            "Activo": false,
             "TiposCE": true,
             "Mercado": {
                 "Archivo": "Coleccionables_Retro",
@@ -92,7 +92,7 @@
                 "PrecioMin": 150,
                 "PrecioMax": 600
             },
-            "Nota": "Coleccionables retro (recreativas, consolas...) que se venden al Coleccionista."
+            "Nota": "DESACTIVADO de momento: no trae types.xml, asi que no sale como loot ni se puede vender hasta sacar sus classnames de su PBO."
         },
         {
             "Id": "2651195301",
@@ -115,7 +115,7 @@
             "Id": "3138381423",
             "Carpeta": "@DayZ-Vehicles",
             "Tipo": "cliente",
-            "Activo": true,
+            "Activo": false,
             "TiposCE": true,
             "Mercado": [
                 {
@@ -137,7 +137,7 @@
                     "PrecioMax": 45000
                 }
             ],
-            "Nota": "Pack de coches y 4x4 (Techs). Se compran en el trader de vehiculos; las piezas en el de piezas. Compatibilidad con 1.30 sin confirmar."
+            "Nota": "DESACTIVADO: el ID 3138381423 no es un mod (en el servidor solo baja un archivo _legacy.bin, probablemente es una coleccion)."
         },
         {
             "Id": "1832448183",

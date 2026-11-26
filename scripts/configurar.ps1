@@ -67,8 +67,9 @@ $listaMercados = foreach ($mm in ($todosMods | Where-Object { $_.Mercado })) {
 }
 foreach ($par in @($listaMercados)) {
     $m = $par.Mod; $c = $par.Cat
-    $tiposFile = Join-Path $Mision "mods_ce\$($m.Carpeta.TrimStart('@'))\types.xml"
-    if (-not (Test-Path $tiposFile)) { Aviso "$($m.Carpeta): no hay types.xml en la mision (ejecuta el instalador). Categoria '$($c.Nombre)' omitida."; continue }
+    $tiposDir = Join-Path $Mision "mods_ce\$($m.Carpeta.TrimStart('@'))"
+    $tiposFiles = @(Get-ChildItem $tiposDir -Filter *.xml -ErrorAction SilentlyContinue)
+    if ($tiposFiles.Count -eq 0) { Aviso "$($m.Carpeta): no hay types.xml en la mision (ejecuta el instalador). Categoria '$($c.Nombre)' omitida."; continue }
 
     # Objetos que ya estan en otra categoria (Expansion no permite repetirlos)
     $existentes = @{}
@@ -78,9 +79,9 @@ foreach ($par in @($listaMercados)) {
     }
     foreach ($k in $generadas.Keys) { $existentes[$k] = $true }
 
-    [xml]$xml = Get-Content -Raw -Encoding UTF8 $tiposFile
     $items = New-Object System.Collections.ArrayList
-    foreach ($t in $xml.types.type) {
+    $todosTipos = foreach ($tf in $tiposFiles) { ([xml](Get-Content -Raw -Encoding UTF8 $tf.FullName)).types.type }
+    foreach ($t in $todosTipos) {
         $n = "$($t.name)"
         if (-not $n -or $n -notmatch $c.Filtro -or $existentes.ContainsKey($n.ToLower())) { continue }
         $existentes[$n.ToLower()] = $true; $generadas[$n.ToLower()] = $true
