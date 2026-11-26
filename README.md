@@ -12,7 +12,11 @@ Kit para montar en **Windows** un servidor de DayZ con:
   - **MuchStuffPack**: muebles y almacenaje.
   - No se puede construir cerca de las zonas PvP ni de los traders.
 - **Garaje** para guardar los coches en tu territorio
-- **El doble de zombis** que en el mapa original (ajustable en `config/zonas.json` > `Zombis`)
+- **El triple de zombis y de animales** que en el mapa original (ajustable en `config/zonas.json` > `Zombis` / `Animales`)
+- **Sin coches vanilla:** solo vehículos de Expansion (UAZ, Vodnik, Land Rover, bus, tractor, barcas y helicópteros MH6, UH1H, Merlin y autogiro), más los helicópteros de **Arma 2 Helicopters Remastered** en el trader de aeronaves
+- **Minimapa** (GPS de Expansion) y brújula en pantalla sin necesitar los objetos
+- **Stamina infinita**
+- **Loot siempre en perfecto estado** gracias a un mod propio que solo se carga en el servidor (`mods_propios/`)
 - **Coleccionables:** el trader "Coleccionista" compra diarios, cintas, reliquias, trofeos de caza y coleccionables retro
 - **Quests:** búsqueda del tesoro diaria, encargo de pieles de lobo y encargo de diarios perdidos
 - **Airdrops:** los de Expansion, que ya traen sus puntos de Deer Isle
@@ -89,7 +93,8 @@ Con el servidor apagado, doble clic en **`3-APLICAR-CONFIGURACION.bat`**. Funcio
 - **Zona PvP de Stonington:** no se puede construir a menos de 500 m del borde y tiene una patrulla de 2 a 4 bandidos.
 - **Candados de Expansion** en puertas de BBP, vallas y tiendas de campaña.
 - **Garaje** de vehículos.
-- **Zombis x2** y hasta 2000 vivos a la vez en el mapa. Se calcula siempre desde una copia del original, así que repetir el script no los vuelve a multiplicar. Si el servidor va lento, baja `Multiplicador` en `config/zonas.json` > `Zombis`.
+- **Zombis x3** (hasta 3000 vivos a la vez) y **animales x3** (hasta 600). Se calcula siempre desde una copia del original, así que repetir el script no los vuelve a multiplicar. Si el servidor va lento, baja `Multiplicador` en `config/zonas.json` > `Zombis`.
+- **Coches vanilla desactivados**, **minimapa** y **stamina infinita** (`config/zonas.json` > `Vehiculos` y `Jugabilidad`).
 - **Quests:** el NPC *Abe el Cazatesoros* está en Oldfield y ofrece tres encargos:
   - *Tesoro enterrado* (diaria): un cofre enterrado en un pueblo al azar, con diarios, cintas y alguna reliquia. Hace falta una pala.
   - *Pieles de lobo*: entregar 3 pieles de lobo.

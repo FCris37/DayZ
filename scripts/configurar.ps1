@@ -4,7 +4,7 @@
 #   3. Zonas donde no se puede construir + candados en vallas/puertas BBP
 #   4. NPCs de los traders
 #   5. Patrullas de bandidos (IA) en las zonas PvP
-#   6. Garaje de vehiculos y cantidad de zombis
+#   6. Garaje, zombis, animales, vehiculos vanilla, minimapa y stamina
 #   7. Quests propias: busqueda del tesoro, pieles y diarios
 # Hay que arrancar el servidor UNA vez antes (Expansion crea sus archivos por defecto) y
 # ejecutar esto con el servidor APAGADO. Se puede repetir cuantas veces quieras.
@@ -202,7 +202,7 @@ if (Test-Path $aiFile) {
 } else { Aviso "No existe $aiFile (Expansion AI no cargado?)." }
 
 # ======================================================================= 6) Garaje
-Titulo '6/7  Garaje de vehiculos y zombis'
+Titulo '6/7  Garaje de vehiculos'
 $garFile = Join-Path $AjustesPerfil 'GarageSettings.json'
 if (Test-Path $garFile) {
     $gar = Leer-Json $garFile
@@ -212,63 +212,118 @@ if (Test-Path $garFile) {
     Ok "Garaje: $(if ($zonas.Garaje.Activo) { 'activado' } else { 'desactivado' })"
 } else { Aviso "No existe $garFile." }
 
-# Zombis: siempre se calcula a partir de una copia del original, asi repetir el script no los multiplica otra vez
+# ======================================================================= 6b) Jugabilidad
+Titulo '6b    Zombis, animales, vehiculos, minimapa y stamina'
 $zb = $zonas.Zombis
-if ($zb) {
-    $factor = [double]$zb.Multiplicador
-    function Escalar([string]$v) { return [string][int][math]::Round([double]$v * $factor) }
+$an = $zonas.Animales
+$jg = $zonas.Jugabilidad
+$fZ = if ($zb) { [double]$zb.Multiplicador } else { 1.0 }
+$fA = if ($an) { [double]$an.Multiplicador } else { 1.0 }
+function Escalar([string]$v, [double]$f) { return [string][int][math]::Round([double]$v * $f) }
+# Siempre se calcula desde una copia del original: repetir el script no vuelve a multiplicar.
+function Original([string]$archivo) {
+    $orig = [IO.Path]::ChangeExtension($archivo, '.original.xml')
+    if (-not (Test-Path $orig)) { Copy-Item $archivo $orig }
+    return $orig
+}
+function Cargar-Xml([string]$ruta) { $x = New-Object System.Xml.XmlDocument; $x.PreserveWhitespace = $true; $x.Load($ruta); return $x }
 
-    $terrFile = Join-Path $Mision 'env\zombie_territories.xml'
-    $terrOrig = Join-Path $Mision 'env\zombie_territories.original.xml'
-    if (Test-Path $terrFile) {
-        if (-not (Test-Path $terrOrig)) { Copy-Item $terrFile $terrOrig }
-        $xmlT = New-Object System.Xml.XmlDocument
-        $xmlT.PreserveWhitespace = $true
-        $xmlT.Load($terrOrig)
-        $nZonas = 0
-        foreach ($zona in $xmlT.SelectNodes('//zone')) {
-            foreach ($a in 'smin', 'smax', 'dmin', 'dmax') {
-                if ($zona.HasAttribute($a)) { $zona.SetAttribute($a, (Escalar $zona.GetAttribute($a))) }
-            }
-            $nZonas++
-        }
-        $xmlT.Save($terrFile)
-        Ok "Zombis x$factor en $nZonas zonas del mapa"
-    } else { Aviso "No existe $terrFile" }
+# --- Territorios de zombis (cuantos aparecen en cada zona)
+$terrFile = Join-Path $Mision 'env\zombie_territories.xml'
+if (Test-Path $terrFile) {
+    $xmlT = Cargar-Xml (Original $terrFile)
+    $nZonas = 0
+    foreach ($zona in $xmlT.SelectNodes('//zone')) {
+        foreach ($a in 'smin', 'smax', 'dmin', 'dmax') { if ($zona.HasAttribute($a)) { $zona.SetAttribute($a, (Escalar $zona.GetAttribute($a) $fZ)) } }
+        $nZonas++
+    }
+    $xmlT.Save($terrFile)
+    Ok "Zombis x$fZ en $nZonas zonas del mapa"
+}
 
-    # Eventos de zombis (hordas en bases militares, etc.): solo se tocan los eventos Infected*
-    $evFile = Join-Path $Mision 'db\events.xml'
-    $evOrig = Join-Path $Mision 'db\events.original.xml'
-    if (Test-Path $evFile) {
-        if (-not (Test-Path $evOrig)) { Copy-Item $evFile $evOrig }
-        $orig = New-Object System.Xml.XmlDocument; $orig.Load($evOrig)
-        $actual = New-Object System.Xml.XmlDocument; $actual.PreserveWhitespace = $true; $actual.Load($evFile)
-        $nEv = 0
-        foreach ($e in $orig.SelectNodes("//event[starts-with(@name,'Infected')]")) {
-            $dest = $actual.SelectSingleNode("//event[@name='$($e.GetAttribute('name'))']")
-            if (-not $dest) { continue }
+# --- Eventos: Infected* (zombis), Animal*/Ambient* (animales), Vehicle* vanilla (desactivar)
+$vanilla = @()
+if ($zonas.Vehiculos -and $zonas.Vehiculos.QuitarVanilla) { $vanilla = @($zonas.Vehiculos.EventosVanilla) }
+$evFile = Join-Path $Mision 'db\events.xml'
+if (Test-Path $evFile) {
+    $orig = Cargar-Xml (Original $evFile)
+    $actual = Cargar-Xml $evFile
+    $nZ = 0; $nA = 0; $nV = 0
+    foreach ($e in $orig.SelectNodes('//event')) {
+        $nombre = $e.GetAttribute('name')
+        $dest = $actual.SelectSingleNode("//event[@name='$nombre']")
+        if (-not $dest) { continue }
+        $f = 0
+        if ($nombre -like 'Infected*') { $f = $fZ; $nZ++ }
+        elseif ($nombre -like 'Animal*' -or $nombre -like 'Ambient*') { $f = $fA; $nA++ }
+        if ($f -gt 0) {
             foreach ($campo in 'nominal', 'min', 'max') {
                 $o = $e.SelectSingleNode($campo); $d = $dest.SelectSingleNode($campo)
-                if ($o -and $d) { $d.InnerText = (Escalar $o.InnerText) }
+                if ($o -and $d) { $d.InnerText = (Escalar $o.InnerText $f) }
             }
-            $nEv++
         }
-        Copia-Seguridad $evFile
-        $actual.Save($evFile)
-        Ok "Zombis x$factor en $nEv eventos de infectados"
+        $act = $dest.SelectSingleNode('active')
+        if ($act) {
+            if ($vanilla -contains $nombre) { $act.InnerText = '0'; $nV++ }
+            else { $o = $e.SelectSingleNode('active'); if ($o) { $act.InnerText = $o.InnerText } }
+        }
     }
+    Copia-Seguridad $evFile
+    $actual.Save($evFile)
+    Ok "Zombis x$fZ en $nZ eventos de infectados"
+    Ok "Animales x$fA en $nA eventos de animales"
+    if ($vanilla.Count) { Ok "Vehiculos vanilla desactivados: $nV eventos (los de Expansion siguen)" }
+}
 
-    $globFile = Join-Path $Mision 'db\globals.xml'
-    if (Test-Path $globFile) {
-        $glob = New-Object System.Xml.XmlDocument; $glob.PreserveWhitespace = $true; $glob.Load($globFile)
-        $var = $glob.SelectSingleNode("//var[@name='ZombieMaxCount']")
-        if ($var) {
-            Copia-Seguridad $globFile
-            $var.SetAttribute('value', [string][int]$zb.MaximoGlobal)
-            $glob.Save($globFile)
-            Ok "Maximo de zombis a la vez en el mapa: $($zb.MaximoGlobal)"
-        }
+# Expansion redefine algunos coches vanilla en su propio archivo de eventos
+$expEv = Join-Path $Mision 'expansion_ce\expansion_events.xml'
+if ((Test-Path $expEv) -and $vanilla.Count) {
+    $x = Cargar-Xml $expEv
+    $n = 0
+    foreach ($nombre in $vanilla) {
+        $act = $x.SelectSingleNode("//event[@name='$nombre']/active")
+        if ($act -and $act.InnerText -ne '0') { $act.InnerText = '0'; $n++ }
     }
+    if ($n) { Copia-Seguridad $expEv; $x.Save($expEv) }
+}
+
+# --- Maximos globales
+$globFile = Join-Path $Mision 'db\globals.xml'
+if (Test-Path $globFile) {
+    $glob = Cargar-Xml $globFile
+    Copia-Seguridad $globFile
+    foreach ($par in @(@('ZombieMaxCount', $zb.MaximoGlobal), @('AnimalMaxCount', $an.MaximoGlobal))) {
+        $var = $glob.SelectSingleNode("//var[@name='$($par[0])']")
+        if ($var -and $par[1]) { $var.SetAttribute('value', [string][int]$par[1]); Ok "$($par[0]) = $($par[1])" }
+    }
+    $glob.Save($globFile)
+}
+
+# --- Minimapa (GPS de Expansion sin necesitar el objeto GPS) y brujula
+$mapFile = Join-Path $AjustesMision 'MapSettings.json'
+if ($jg -and $jg.Minimapa -and (Test-Path $mapFile)) {
+    $mp = Leer-Json $mapFile
+    Copia-Seguridad $mapFile
+    foreach ($par in @(@('EnableHUDGPS', 1), @('NeedGPSItemForKeyBinding', 0), @('NeedMapItemForKeyBinding', 0),
+                       @('CanOpenMapWithKeyBinding', 1), @('EnableHUDCompass', 1), @('NeedCompassItemForHUDCompass', 0), @('NeedGPSItemForHUDCompass', 0))) {
+        Poner $mp $par[0] $par[1]
+    }
+    Guardar-Json $mp $mapFile
+    Ok 'Minimapa y brujula sin necesitar objetos (se activan con su tecla)'
+}
+
+# --- Stamina infinita (cfggameplay.json de la mision)
+$gpFile = Join-Path $Mision 'cfggameplay.json'
+if ($jg -and $jg.SinStamina -and (Test-Path $gpFile)) {
+    $gp = Leer-Json $gpFile
+    Copia-Seguridad $gpFile
+    $st = $gp.PlayerData.StaminaData
+    foreach ($c in 'sprintStaminaModifierErc', 'sprintStaminaModifierCro', 'sprintSwimmingStaminaModifier', 'sprintLadderStaminaModifier',
+                   'meleeStaminaModifier', 'obstacleTraversalStaminaModifier', 'holdBreathStaminaModifier', 'staminaKgToStaminaPercentPenalty') {
+        Poner $st $c 0.0
+    }
+    Guardar-Json $gp $gpFile
+    Ok 'Stamina: correr, nadar, saltar y pelear ya no la gastan'
 }
 
 # ======================================================================= 7) Quests

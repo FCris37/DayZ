@@ -95,6 +95,23 @@
             "Nota": "Coleccionables retro (recreativas, consolas...) que se venden al Coleccionista."
         },
         {
+            "Id": "2651195301",
+            "Carpeta": "@Arma2Helicopters",
+            "Tipo": "cliente",
+            "Activo": true,
+            "TiposCE": true,
+            "Mercado": {
+                "Archivo": "Helicopteros_Arma2",
+                "Nombre": "Helicopteros (Arma 2)",
+                "Trader": "Aircraft",
+                "Modo": 1,
+                "Filtro": "^(?!.*(?i:door|wheel|rotor|hatch|part|battery|plug|light|seat|wreck|ruin|debris|skin|spray)).*$",
+                "PrecioMin": 40000,
+                "PrecioMax": 80000
+            },
+            "Nota": "Arma 2 Helicopters Remastered: helicopteros extra sobre el sistema de vehiculos de Expansion. Se compran en el trader de aeronaves. ID sacado de su historial de cambios: compruebalo."
+        },
+        {
             "Id": "2831742849",
             "Carpeta": "@PVEZ-Reloaded",
             "Tipo": "cliente",
@@ -115,6 +132,14 @@
             "Activo": false,
             "TiposCE": true,
             "Nota": "Pack grande de armas. Comprueba que siga publicado antes de activarlo."
+        },
+        {
+            "Id": "0",
+            "Carpeta": "@LootPristine",
+            "Tipo": "servidor",
+            "Activo": true,
+            "Local": "mods_propios\\@LootPristine",
+            "Nota": "Mod propio (carpeta mods_propios): el loot aparece siempre en estado perfecto. Solo servidor, los jugadores no lo descargan."
         }
     ]
 }

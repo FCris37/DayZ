@@ -47,7 +47,7 @@ Ok "Servidor instalado en $Servidor"
 # ---------------------------------------------------------------- Mods
 Titulo "3/6  Mods del Workshop ($($mods.Count) activos)"
 $parametros = @('+login', $usuario)
-foreach ($m in $mods) { $parametros += @('+workshop_download_item', '221100', $m.Id, 'validate') }
+foreach ($m in ($mods | Where-Object { -not $_.Local })) { $parametros += @('+workshop_download_item', '221100', $m.Id, 'validate') }
 $parametros += '+quit'
 & $SteamCMD @parametros
 
@@ -56,7 +56,8 @@ $keysDir = Join-Path $Servidor 'keys'
 New-Item -ItemType Directory -Force -Path $keysDir | Out-Null
 $faltan = @()
 foreach ($m in $mods) {
-    $origen = Join-Path $workshop $m.Id
+    # Mods propios (carpeta mods_propios del kit) o mods del Workshop
+    if ($m.Local) { $origen = Join-Path $Raiz $m.Local } else { $origen = Join-Path $workshop $m.Id }
     if (-not (Test-Path $origen)) { $faltan += $m; continue }
     $destino = Join-Path $Servidor $m.Carpeta
     robocopy $origen $destino /MIR /NFL /NDL /NJH /NJS /NP | Out-Null

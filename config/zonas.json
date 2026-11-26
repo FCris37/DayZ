@@ -129,8 +129,31 @@
     },
     "Zombis": {
         "_info": "Multiplica los zombis de Deer Isle. 1.0 = como viene el mapa, 2.0 = el doble, 3.0 = el triple. MaximoGlobal = tope de zombis vivos en todo el mapa a la vez (por defecto 1000). Mas zombis = mas carga para el PC.",
-        "Multiplicador": 2.0,
-        "MaximoGlobal": 2000
+        "Multiplicador": 3.0,
+        "MaximoGlobal": 3000
+    },
+    "Animales": {
+        "_info": "Multiplica los animales (ciervos, jabalies, lobos, osos, gallinas...). MaximoGlobal = tope de animales vivos a la vez (por defecto 200).",
+        "Multiplicador": 3.0,
+        "MaximoGlobal": 600
+    },
+    "Vehiculos": {
+        "_info": "QuitarVanilla=true desactiva la aparicion de los coches del juego base. Siguen los de Expansion (UAZ, Vodnik, Land Rover, bus, tractor, helicopteros MH6/UH1H/Merlin/autogiro, barcas) y los que se compran en el trader.",
+        "QuitarVanilla": true,
+        "EventosVanilla": [
+            "VehicleCivilianSedan",
+            "VehicleHatchback02",
+            "VehicleOffroadHatchback",
+            "VehicleSedan02",
+            "VehicleTruck01",
+            "VehicleOffroad02",
+            "VehicleBoat"
+        ]
+    },
+    "Jugabilidad": {
+        "_info": "Minimapa: GPS y brujula de Expansion en pantalla sin necesitar los objetos. SinStamina: correr, nadar y saltar no gastan stamina. El loot siempre en perfecto estado lo hace el mod propio @LootPristine (config/mods.json).",
+        "Minimapa": true,
+        "SinStamina": true
     },
     "Garaje": {
         "_info": "Garaje de vehiculos de Expansion: guardar el coche en el garaje de tu territorio (bandera).",
