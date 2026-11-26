@@ -147,6 +147,34 @@
             "Nota": "Dar la vuelta a vehiculos volcados con una llave inglesa. Ultima correccion conocida para 1.26."
         },
         {
+            "Id": "3838335809",
+            "Carpeta": "@QoL_CarPack",
+            "Tipo": "cliente",
+            "Activo": true,
+            "TiposCE": true,
+            "Mercado": [
+                {
+                    "Archivo": "QoLCars_Piezas",
+                    "Nombre": "Coches QoL: piezas",
+                    "Trader": "Vehicle_Parts",
+                    "Modo": 1,
+                    "Filtro": "(?i)(door|wheel|tire|tyre|hood|trunk|bumper|battery|plug|radiator|light|seat|glass|window|ruin|wreck|part|spare|kit|key|skin|spray|cover|engine|fuel|canister|dver|koleso|kapot|bagazhnik)",
+                    "PrecioMin": 150,
+                    "PrecioMax": 900
+                },
+                {
+                    "Archivo": "QoLCars_Coches",
+                    "Nombre": "Coches QoL",
+                    "Trader": "Vehicles",
+                    "Modo": 1,
+                    "Filtro": ".*",
+                    "PrecioMin": 15000,
+                    "PrecioMax": 45000
+                }
+            ],
+            "Nota": "QoL_CarPack (2,7 GB). Coches en el trader de vehiculos y piezas en el de piezas, si el mod trae types.xml."
+        },
+        {
             "Id": "2831742849",
             "Carpeta": "@PVEZ-Reloaded",
             "Tipo": "cliente",
