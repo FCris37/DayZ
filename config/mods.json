@@ -1,0 +1,14 @@
+{
+    "_info": "Lista de mods. Orden = orden de carga. Tipo 'cliente' = lo necesitan servidor y jugadores (-mod). Tipo 'servidor' = solo el servidor (-serverMod). Pon Activo en false para desactivar uno sin borrarlo.",
+    "Mods": [
+        { "Id": "1559212036", "Carpeta": "@CF",                     "Tipo": "cliente", "Activo": true,  "Nota": "Community Framework. Base de casi todos los mods." },
+        { "Id": "2545327648", "Carpeta": "@DabsFramework",          "Tipo": "cliente", "Activo": true,  "Nota": "Dabs Framework. Lo necesita Expansion." },
+        { "Id": "2116157322", "Carpeta": "@DayZ-Expansion-Licensed","Tipo": "cliente", "Activo": true,  "Nota": "Modelos con licencia de Expansion (no van dentro del Bundle)." },
+        { "Id": "2572331007", "Carpeta": "@DayZ-Expansion-Bundle",  "Tipo": "cliente", "Activo": true,  "Nota": "Traders/mercado, zonas seguras, bases con territorio y candados, vehiculos, armas extra, misiones, grupos, mapa..." },
+        { "Id": "1602372402", "Carpeta": "@DeerIsle",               "Tipo": "cliente", "Activo": true,  "Nota": "Mapa Deer Isle." },
+        { "Id": "2831742849", "Carpeta": "@PVEZ-Reloaded",          "Tipo": "cliente", "Activo": true,  "Nota": "PvE en todo el mapa con zonas PvP delimitadas." },
+        { "Id": "1564026768", "Carpeta": "@CommunityOnlineTools",   "Tipo": "cliente", "Activo": true,  "Nota": "Herramienta de admin (teletransporte, ver coordenadas, spawnear objetos)." },
+        { "Id": "2443122116", "Carpeta": "@SNAFU-Weapons",          "Tipo": "cliente", "Activo": false, "Nota": "Pack grande de armas. Comprueba que siga publicado antes de activarlo." },
+        { "Id": "2927929000", "Carpeta": "@RetroCollectibles",      "Tipo": "cliente", "Activo": false, "Nota": "Coleccionables retro para vender. Tras activarlo anade sus classnames a Coleccionables.json." }
+    ]
+}

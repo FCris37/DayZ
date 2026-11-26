@@ -1,0 +1,25 @@
+{
+    "m_Version": 13,
+    "DisplayName": "Coleccionista",
+    "MinRequiredReputation": 0,
+    "MaxRequiredReputation": 2147483647,
+    "RequiredFaction": "",
+    "RequiredCompletedQuestID": -1,
+    "TraderIcon": "Trader",
+    "Currencies": [
+        "expansionbanknotehryvnia"
+    ],
+    "DisplayCurrencyValue": 1,
+    "DisplayCurrencyName": "",
+    "UseCategoryOrder": 0,
+    "Categories": [
+        "Coleccionables:2"
+    ],
+    "Items": {
+        "bear_beige": 2,
+        "bear_dark": 2,
+        "bear_pink": 2,
+        "bear_white": 2,
+        "easteregg": 2
+    }
+}

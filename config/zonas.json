@@ -1,0 +1,29 @@
+{
+    "_info": "Coordenadas [X, Y, Z]: X = oeste/este, Y = altura, Z = sur/norte. Sacalas dentro del juego con Community Online Tools. Las zonas con Activo=false se ignoran.",
+
+    "DistanciaMinimaBasesAPvP": 500,
+    "DistanciaMinimaBasesATraders": 300,
+
+    "Traders": [
+        {
+            "Nombre": "Trader principal",
+            "Activo": false,
+            "Centro": [0, 0, 0],
+            "RadioZonaSegura": 150,
+            "NPCs": [
+                { "Clase": "ExpansionTraderDenis",   "Trader": "Weapons",           "Posicion": [0, 0, 0], "Orientacion": 0, "Ropa": "HunterPants_Spring,HuntingJacket_Summer,CombatBoots_Green" },
+                { "Clase": "ExpansionTraderMaria",   "Trader": "Clothing",          "Posicion": [0, 0, 0], "Orientacion": 0, "Ropa": "" },
+                { "Clase": "ExpansionTraderQuinn",   "Trader": "Consumables",       "Posicion": [0, 0, 0], "Orientacion": 0, "Ropa": "" },
+                { "Clase": "ExpansionTraderBoris",   "Trader": "BuildingSupplies",  "Posicion": [0, 0, 0], "Orientacion": 0, "Ropa": "" },
+                { "Clase": "ExpansionTraderLewis",   "Trader": "Vehicles",          "Posicion": [0, 0, 0], "Orientacion": 0, "Ropa": "" },
+                { "Clase": "ExpansionTraderHelga",   "Trader": "Coleccionista",     "Posicion": [0, 0, 0], "Orientacion": 0, "Ropa": "" },
+                { "Clase": "ExpansionExchangeMachine","Trader": "Exchange",         "Posicion": [0, 0, 0], "Orientacion": 0, "Ropa": "" }
+            ]
+        }
+    ],
+
+    "ZonasPvP": [
+        { "Nombre": "PvP - Stonington",      "Activo": false, "Centro": [0, 0, 0], "Radio": 600 },
+        { "Nombre": "PvP - Base militar",    "Activo": false, "Centro": [0, 0, 0], "Radio": 400 }
+    ]
+}

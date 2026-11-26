@@ -1,0 +1,4 @@
+# Archivos locales que no deben subirse
+*.log
+*.bak
+config/ajustes.local.json
