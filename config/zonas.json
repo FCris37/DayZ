@@ -4,7 +4,7 @@
     "DistanciaMinimaBasesAPvP": 500,
     "DistanciaMinimaBasesATraders": 300,
     "Mercado": {
-        "_info": "Mercado central: casetas en forma de U alrededor de Centro, dejando libre un hueco de AperturaEntrada grados hacia Entrada (0 = norte, 90 = este). Cada caseta: dos tejados (Techo), puesto, cartel, luz, cajas y un NPC estatico mirando al centro. En el centro: bandera y Abe (quests). Entregas = donde aparecen los vehiculos comprados: Posicion fija [X,Y,Z] + Orientacion (hacia donde miran) + Plazas, o Distancia y Angulo desde el centro.",
+        "_info": "Mercado central: casetas en forma de U alrededor de Centro, dejando libre un hueco de AperturaEntrada grados hacia Entrada (0 = norte, 90 = este). Cada caseta: dos tejados (Techo), puesto, cartel, luz, cajas y un NPC estatico mirando al centro. En el centro: bandera y Abe (quests). Entregas = donde aparecen los vehiculos comprados: Posicion fija [X,Y,Z] + Orientacion (hacia donde miran) + Plazas, o Distancia y Angulo desde el centro. Entregas con Desde/Hasta: fila de plazas entre los dos puntos (una cada ~7 m, o las que diga Plazas), mirando al mercado. Decoracion=true anade farolas, palets, flores, bancos, fuego, mesa y luces del helipuerto.",
         "Activo": true,
         "Centro": [
             5407.757812,
@@ -91,15 +91,28 @@
             }
         ],
         "EntregaCoches": {
-            "Distancia": 45,
-            "Angulo": 90,
-            "Plazas": 4
+            "Desde": [
+                5480.331543,
+                14.82677,
+                4961.38916
+            ],
+            "Hasta": [
+                5463.978027,
+                14.835001,
+                4919.971191
+            ]
         },
         "EntregaHelicopteros": {
-            "Distancia": 75,
-            "Angulo": 90
+            "Posicion": [
+                5409.958008,
+                14.835,
+                5016.356445
+            ],
+            "Orientacion": 180,
+            "Plazas": 1
         },
-        "EntregaBarcas": null
+        "EntregaBarcas": null,
+        "Decoracion": true
     },
     "Traders": [
         {

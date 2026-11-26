@@ -185,6 +185,65 @@ if ($mc -and $mc.Activo) {
     $posAbe = @(($cx + 1 * (Sen $g)), 0, ($cz + 1 * (Cos_ $g)))
     Ok "Centro: bandera y Abe el Cazatesoros (entrada hacia $g grados)"
 
+    # --- Decoracion
+    if ($mc.Decoracion) {
+        $antes = $objetos.Count
+        # Farolas entre casetas y a los lados de la entrada
+        for ($i = 0; $i -lt $n - 1; $i++) {
+            $t1 = $g + $ap / 2 + ($i + 0.5) * (360.0 - $ap) / ($n - 1)
+            Obj 'Land_Power_Pole_Wood1_Lamp_Amp' ($cx + ($R + 3) * (Sen $t1)) ($cz + ($R + 3) * (Cos_ $t1)) ($t1 + 180) 0
+        }
+        foreach ($lado in -1, 1) {
+            $t1 = $g + $lado * ($ap / 2 - 12)
+            Obj 'Land_Power_Pole_Wood1_Lamp_Amp' ($cx + ($R + 2) * (Sen $t1)) ($cz + ($R + 2) * (Cos_ $t1)) ($t1 + 180) 0
+        }
+        # Detras de cada caseta: palets y barriles; delante: flores a los lados del tejado
+        for ($i = 0; $i -lt $n; $i++) {
+            $th = $g + $ap / 2 + $i * (360.0 - $ap) / ($n - 1)
+            $bx = $cx + ($R + 3.5) * (Sen $th); $bz = $cz + ($R + 3.5) * (Cos_ $th)
+            $px = Sen ($th + 90); $pz = Cos_ ($th + 90)
+            if ($i % 2 -eq 0) { Obj 'StaticObj_Misc_Pallets2' ($bx + $px * 1.5) ($bz + $pz * 1.5) $th 0 }
+            else { Obj 'StaticObj_Misc_WoodenCrate_5x' ($bx + $px * 1.5) ($bz + $pz * 1.5) $th 0 }
+            Obj 'ExpansionIndustrialProp_Barrel1' ($bx - $px * 1.8) ($bz - $pz * 1.8) 0 0
+            $fx = $cx + ($R - 4.5) * (Sen $th); $fz = $cz + ($R - 4.5) * (Cos_ $th)
+            Obj 'StaticObj_Furniture_flowers_01' ($fx + $px * 3.2) ($fz + $pz * 3.2) 0 0
+            Obj 'StaticObj_Furniture_flowers_02' ($fx - $px * 3.2) ($fz - $pz * 3.2) 0 0
+        }
+        # Plaza central: bancos mirando al centro, bidones con fuego y una mesa con sillas
+        foreach ($a in 140, 220) {
+            $t1 = $g + $a
+            Obj 'StaticObj_Misc_Bench1' ($cx + 6.5 * (Sen $t1)) ($cz + 6.5 * (Cos_ $t1)) ($t1 + 90) 0
+        }
+        foreach ($a in 100, 260) {
+            $t1 = $g + $a
+            Obj 'bldr_fire_barrel' ($cx + 5 * (Sen $t1)) ($cz + 5 * (Cos_ $t1)) 0 0
+        }
+        $mx = $cx + 7 * (Sen ($g + 180)); $mz = $cz + 7 * (Cos_ ($g + 180))
+        Obj 'StaticObj_Furniture_table_umakart' $mx $mz $g 0
+        Obj 'ExpansionPropLawnChair' ($mx + 1.2 * (Sen ($g + 90))) ($mz + 1.2 * (Cos_ ($g + 90))) ($g - 90) 0
+        Obj 'ExpansionPropLawnChair' ($mx - 1.2 * (Sen ($g + 90))) ($mz - 1.2 * (Cos_ ($g + 90))) ($g + 90) 0
+        # Helipuerto: luces de pista en circulo y cartel
+        $hp = $mc.EntregaHelicopteros
+        if ($hp -and $hp.Posicion) {
+            $hx = [double]$hp.Posicion[0]; $hz = [double]$hp.Posicion[2]
+            for ($k = 0; $k -lt 8; $k++) { $t1 = $k * 45; Obj 'StaticObj_Airfield_Light_Edge' ($hx + 10 * (Sen $t1)) ($hz + 10 * (Cos_ $t1)) 0 0 }
+            $t1 = [math]::Atan2($cx - $hx, $cz - $hz) / $rad
+            Obj 'ExpansionSign_Trader_Aircraft' ($hx + 12 * (Sen $t1)) ($hz + 12 * (Cos_ $t1)) ($t1 + 180) 0
+        }
+        # Aparcamiento: farolas en los extremos y cartel
+        $ec = $mc.EntregaCoches
+        if ($ec -and $ec.Desde -and $ec.Hasta) {
+            foreach ($pt in @($ec.Desde, $ec.Hasta)) {
+                $t1 = [math]::Atan2($cx - [double]$pt[0], $cz - [double]$pt[2]) / $rad
+                Obj 'Land_Power_Pole_Wood1_Lamp_Amp' ([double]$pt[0] - 6 * (Sen $t1)) ([double]$pt[2] - 6 * (Cos_ $t1)) $t1 0
+            }
+            $sx = ([double]$ec.Desde[0] + [double]$ec.Hasta[0]) / 2; $sz = ([double]$ec.Desde[2] + [double]$ec.Hasta[2]) / 2
+            $t1 = [math]::Atan2($cx - $sx, $cz - $sz) / $rad
+            Obj 'ExpansionSign_Trader_Vehicles' ($sx - 7 * (Sen $t1)) ($sz - 7 * (Cos_ $t1)) ($t1 + 180) 0
+        }
+        Ok "Decoracion: $($objetos.Count - $antes) objetos (farolas, palets, flores, bancos, fuego, helipuerto...)"
+    }
+
     Guardar-Json ([pscustomobject]@{ Objetos = @($objetos) }) $objetosFile
     Ok "$($objetos.Count) objetos decorativos (los coloca el mod @DayZKit a ras de suelo)"
 
@@ -196,6 +255,20 @@ if ($mc -and $mc.Activo) {
         function Puntos($cfg, [int]$cuantos, [double]$sep) {
             $lista = New-Object System.Collections.ArrayList
             if (-not $cfg) { return @() }
+            if ($cfg.Desde -and $cfg.Hasta) {
+                # Fila de plazas entre dos puntos; los vehiculos miran hacia el mercado salvo que se indique Orientacion
+                $x1 = [double]$cfg.Desde[0]; $z1 = [double]$cfg.Desde[2]; $x2 = [double]$cfg.Hasta[0]; $z2 = [double]$cfg.Hasta[2]
+                $largo = [math]::Sqrt(($x2 - $x1) * ($x2 - $x1) + ($z2 - $z1) * ($z2 - $z1))
+                $num = if ($cfg.Plazas) { [int]$cfg.Plazas } else { [math]::Max(1, [int][math]::Floor($largo / 7) + 1) }
+                $yBase = [double]$cfg.Desde[1]
+                for ($k = 0; $k -lt $num; $k++) {
+                    $t = if ($num -gt 1) { $k / ($num - 1) } else { 0.5 }
+                    $x = $x1 + ($x2 - $x1) * $t; $z = $z1 + ($z2 - $z1) * $t
+                    $o = if ($null -ne $cfg.Orientacion) { [double]$cfg.Orientacion } else { [math]::Atan2($cx - $x, $cz - $z) / $rad }
+                    [void]$lista.Add([pscustomobject]@{ Position = @([math]::Round($x, 2), [math]::Round($yBase + 0.5, 2), [math]::Round($z, 2)); Orientation = @((Norm $o), 0.0, 0.0) })
+                }
+                return @($lista)
+            }
             if ($cfg.Posicion) {
                 # Punto fijo: las plazas se reparten en fila, perpendiculares a la Orientacion
                 $a = [double]$cfg.Orientacion; $px = [double]$cfg.Posicion[0]; $pz = [double]$cfg.Posicion[2]; $cy = [double]$cfg.Posicion[1]
