@@ -61,8 +61,12 @@ foreach ($sub in 'Market', 'Traders') {
 
 # Categorias generadas a partir del types.xml de cada mod
 $generadas = @{}
-foreach ($m in ($todosMods | Where-Object { $_.Mercado })) {
-    $c = $m.Mercado
+# "Mercado" puede ser una categoria o una lista de categorias (p. ej. armas por un lado y accesorios por otro)
+$listaMercados = foreach ($mm in ($todosMods | Where-Object { $_.Mercado })) {
+    foreach ($cc in @($mm.Mercado)) { [pscustomobject]@{ Mod = $mm; Cat = $cc } }
+}
+foreach ($par in @($listaMercados)) {
+    $m = $par.Mod; $c = $par.Cat
     $tiposFile = Join-Path $Mision "mods_ce\$($m.Carpeta.TrimStart('@'))\types.xml"
     if (-not (Test-Path $tiposFile)) { Aviso "$($m.Carpeta): no hay types.xml en la mision (ejecuta el instalador). Categoria '$($c.Nombre)' omitida."; continue }
 

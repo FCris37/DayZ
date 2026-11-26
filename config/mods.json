@@ -129,9 +129,29 @@
             "Id": "2443122116",
             "Carpeta": "@SNAFU-Weapons",
             "Tipo": "cliente",
-            "Activo": false,
+            "Activo": true,
             "TiposCE": true,
-            "Nota": "Pack grande de armas. Comprueba que siga publicado antes de activarlo."
+            "Nota": "Pack grande de armas. Su autor dejo de darle soporte en 1.29; segun CFTools se actualizo en octubre de 2026. Si el servidor no arranca, desactivalo.",
+            "Mercado": [
+                {
+                    "Archivo": "SNAFU_Accesorios",
+                    "Nombre": "SNAFU: cargadores y accesorios",
+                    "Trader": "Attachments",
+                    "Modo": 1,
+                    "Filtro": "(?i)(mag|ammo|optic|scope|sight|suppressor|silencer|compensator|muzzle|bipod|light|rail|hndgrd|handguard|bttstck|buttstock|stock|grip|laser|bayonet)",
+                    "PrecioMin": 200,
+                    "PrecioMax": 1200
+                },
+                {
+                    "Archivo": "SNAFU_Armas",
+                    "Nombre": "SNAFU: armas",
+                    "Trader": "Weapons",
+                    "Modo": 1,
+                    "Filtro": ".*",
+                    "PrecioMin": 2500,
+                    "PrecioMax": 9000
+                }
+            ]
         },
         {
             "Id": "0",
