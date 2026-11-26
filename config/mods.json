@@ -112,6 +112,41 @@
             "Nota": "Arma 2 Helicopters Remastered: helicopteros extra sobre el sistema de vehiculos de Expansion. Se compran en el trader de aeronaves. ID sacado de su historial de cambios: compruebalo."
         },
         {
+            "Id": "3138381423",
+            "Carpeta": "@DayZ-Vehicles",
+            "Tipo": "cliente",
+            "Activo": true,
+            "TiposCE": true,
+            "Mercado": [
+                {
+                    "Archivo": "DayZVehicles_Piezas",
+                    "Nombre": "Coches (mod): piezas",
+                    "Trader": "Vehicle_Parts",
+                    "Modo": 1,
+                    "Filtro": "(?i)(door|wheel|tire|tyre|hood|trunk|bumper|battery|plug|radiator|light|seat|glass|window|ruin|wreck|part|spare|kit|key|skin|spray|cover|engine|fuel|canister)",
+                    "PrecioMin": 150,
+                    "PrecioMax": 900
+                },
+                {
+                    "Archivo": "DayZVehicles_Coches",
+                    "Nombre": "Coches (mod)",
+                    "Trader": "Vehicles",
+                    "Modo": 1,
+                    "Filtro": ".*",
+                    "PrecioMin": 15000,
+                    "PrecioMax": 45000
+                }
+            ],
+            "Nota": "Pack de coches y 4x4 (Techs). Se compran en el trader de vehiculos; las piezas en el de piezas. Compatibilidad con 1.30 sin confirmar."
+        },
+        {
+            "Id": "1832448183",
+            "Carpeta": "@FlipTransport",
+            "Tipo": "cliente",
+            "Activo": true,
+            "Nota": "Dar la vuelta a vehiculos volcados con una llave inglesa. Ultima correccion conocida para 1.26."
+        },
+        {
             "Id": "2831742849",
             "Carpeta": "@PVEZ-Reloaded",
             "Tipo": "cliente",
