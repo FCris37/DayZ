@@ -175,6 +175,23 @@
             "Nota": "QoL_CarPack (2,7 GB). Coches en el trader de vehiculos y piezas en el de piezas, si el mod trae types.xml."
         },
         {
+            "Id": "3259499793",
+            "Carpeta": "@FurniturePack",
+            "Tipo": "cliente",
+            "Activo": true,
+            "TiposCE": true,
+            "Mercado": {
+                "Archivo": "Muebles_FurniturePack",
+                "Nombre": "Muebles",
+                "Trader": "BuildingSupplies",
+                "Modo": 1,
+                "Filtro": ".*",
+                "PrecioMin": 300,
+                "PrecioMax": 1500
+            },
+            "Nota": "Furniture Pack: muebles para decorar las bases. Se venden en la caseta de Construccion (si el mod trae types.xml)."
+        },
+        {
             "Id": "2831742849",
             "Carpeta": "@PVEZ-Reloaded",
             "Tipo": "cliente",
