@@ -262,7 +262,7 @@ if ($mc -and $mc.Activo) {
         Obj 'ExpansionPropLawnChair' ($mx - 1.2 * (Sen ($g + 90))) ($mz - 1.2 * (Cos_ ($g + 90))) ($g + 90) 0
         # Helipuerto: luces de pista en circulo y cartel
         $hp = $mc.EntregaHelicopteros
-        if ($hp -and $hp.Posicion) {
+        if ($hp -and $hp.Posicion -and $hp.Luces -ne $false) {
             $hx = [double]$hp.Posicion[0]; $hz = [double]$hp.Posicion[2]
             for ($k = 0; $k -lt 8; $k++) { $t1 = $k * 45; Obj 'StaticObj_Airfield_Light_Edge' ($hx + 10 * (Sen $t1)) ($hz + 10 * (Cos_ $t1)) 0 0 }
             $t1 = [math]::Atan2($cx - $hx, $cz - $hz) / $rad
