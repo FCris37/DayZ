@@ -192,6 +192,13 @@
             "Nota": "Furniture Pack: muebles para las bases, a la venta en la caseta de Construccion. No trae types.xml: el instalador lee sus objetos de los .pbo."
         },
         {
+            "Id": "2381686295",
+            "Carpeta": "@MiniMap",
+            "Tipo": "cliente",
+            "Activo": true,
+            "Nota": "MiniMap: minimapa clasico abajo a la derecha. Sustituye al GPS de Expansion (zonas.json > Jugabilidad > Minimapa = \"mod\"). Es la version original: si da error con la 1.30, desactivalo y vuelve a poner Minimapa = \"expansion\"."
+        },
+        {
             "Id": "2831742849",
             "Carpeta": "@PVEZ-Reloaded",
             "Tipo": "cliente",

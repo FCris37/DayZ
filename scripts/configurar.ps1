@@ -518,17 +518,20 @@ if (Test-Path $globFile) {
     $glob.Save($globFile)
 }
 
-# --- Minimapa (GPS de Expansion sin necesitar el objeto GPS) y brujula
+# --- Minimapa: el GPS de Expansion (Minimapa = "expansion") o ninguno (otro mod, p. ej. MiniMap).
+#     La brujula de Expansion y abrir el mapa con la tecla M se dejan siempre activos, sin objetos.
 $mapFile = Join-Path $AjustesMision 'MapSettings.json'
-if ($jg -and $jg.Minimapa -and (Test-Path $mapFile)) {
+if ($jg -and (Test-Path $mapFile)) {
     $mp = Leer-Json $mapFile
     Copia-Seguridad $mapFile
-    foreach ($par in @(@('EnableHUDGPS', 1), @('NeedGPSItemForKeyBinding', 0), @('NeedMapItemForKeyBinding', 0),
+    $gpsExp = ("$($jg.Minimapa)" -ieq 'expansion' -or $jg.Minimapa -eq $true)
+    foreach ($par in @(@('EnableHUDGPS', [int]$gpsExp), @('NeedGPSItemForKeyBinding', 0), @('NeedMapItemForKeyBinding', 0),
                        @('CanOpenMapWithKeyBinding', 1), @('EnableHUDCompass', 1), @('NeedCompassItemForHUDCompass', 0), @('NeedGPSItemForHUDCompass', 0))) {
         Poner $mp $par[0] $par[1]
     }
     Guardar-Json $mp $mapFile
-    Ok 'Minimapa y brujula sin necesitar objetos (se activan con su tecla)'
+    if ($gpsExp) { Ok 'Minimapa de Expansion y brujula sin necesitar objetos (se activan con su tecla)' }
+    else { Ok 'Minimapa de Expansion desactivado (se usa el de otro mod); brujula y mapa con M siguen activos' }
 }
 
 # --- Marcadores en el mapa (en espanol): mercado, aparcamiento, helipuerto y zonas PvP

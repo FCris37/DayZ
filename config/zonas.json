@@ -345,8 +345,8 @@
         ]
     },
     "Jugabilidad": {
-        "_info": "Minimapa: GPS y brujula de Expansion en pantalla sin necesitar los objetos. SinStamina: correr, nadar y saltar no gastan stamina. El loot siempre en perfecto estado lo hace el mod propio @LootPristine (config/mods.json).",
-        "Minimapa": true,
+        "_info": "Minimapa: \"expansion\" = GPS de Expansion en pantalla sin objeto; \"mod\" = se desactiva el de Expansion porque se usa otro mod (MiniMap). SinStamina: correr, nadar y saltar no gastan stamina. El loot siempre en perfecto estado lo hace el mod propio @DayZKit (config/mods.json).",
+        "Minimapa": "mod",
         "SinStamina": true
     },
     "Garaje": {
