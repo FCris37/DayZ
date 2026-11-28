@@ -173,6 +173,16 @@ if ($mc -and $mc.Activo) {
         $archivo = 'Mercado_' + ($c.Nombre -replace '[^A-Za-z0-9]', '')
         $titulo = if ($c.Titulo) { $c.Titulo } else { $c.Nombre }
         if (-not (Crear-Combo $archivo $titulo @($c.Traders))) { continue }
+        if ($c.Posicion) {
+            # Caseta propia (p. ej. una casa puesta con DayZ Editor): el NPC va en la posicion exacta,
+            # con su altura, y no se genera tejado, mostrador ni decoracion alrededor
+            if (Es-Cero $c.Posicion) { Aviso "Caseta $($c.Nombre): Posicion 0,0,0, se omite."; continue }
+            $equipo = @(); if ($c.Ropa) { $equipo += $c.Ropa }; $equipo += "name:$titulo"
+            $pos = ($c.Posicion | ForEach-Object { Num $_ }) -join ' '
+            [void]$lineasMercado.Add("$($c.NPC).$archivo|$pos|$(Num ([double]$c.Orientacion)) 0 0|$($equipo -join ',')")
+            Ok ("Caseta {0} (posicion fija): {1}" -f $c.Nombre, (@($c.Traders) -join ' + '))
+            continue
+        }
         if ($n -gt 1) { $theta = $g + $ap / 2 + $i * (360.0 - $ap) / ($n - 1) } else { $theta = $g + 180 }
         $nx = $cx + $R * (Sen $theta); $nz = $cz + $R * (Cos_ $theta)
         $yaw = Norm ($theta + 180)                      # el NPC mira al centro del mercado
@@ -211,8 +221,10 @@ if ($mc -and $mc.Activo) {
     Ok "Centro: bandera y Abe el Cazatesoros (entrada hacia $g grados)"
 
     # --- Decoracion
+    $enCirculo = @($casetas | Where-Object { -not $_.Posicion }).Count -gt 0
     if ($mc.Decoracion) {
         $antes = $objetos.Count
+      if ($enCirculo) {
         # Farolas entre casetas y a los lados de la entrada
         for ($i = 0; $i -lt $n - 1; $i++) {
             $t1 = $g + $ap / 2 + ($i + 0.5) * (360.0 - $ap) / ($n - 1)
@@ -234,6 +246,7 @@ if ($mc -and $mc.Activo) {
             Obj 'StaticObj_Furniture_flowers_01' ($fx + $px * 3.2) ($fz + $pz * 3.2) 0 0
             Obj 'StaticObj_Furniture_flowers_02' ($fx - $px * 3.2) ($fz - $pz * 3.2) 0 0
         }
+      }
         # Plaza central: bancos mirando al centro, bidones con fuego y una mesa con sillas
         foreach ($a in 140, 220) {
             $t1 = $g + $a
