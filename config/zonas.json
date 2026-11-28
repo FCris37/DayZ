@@ -376,7 +376,7 @@
         "MaximoGlobal": 600
     },
     "Vehiculos": {
-        "_info": "QuitarVanilla=true desactiva la aparicion de los coches del juego base. Siguen los de Expansion (UAZ, Vodnik, Land Rover, bus, tractor, helicopteros MH6/UH1H/Merlin/autogiro, barcas) y los que se compran en el trader.",
+        "_info": "QuitarVanilla=true desactiva la aparicion de los coches del juego base. Siguen los de Expansion (UAZ, Vodnik, Land Rover, bus, tractor, helicopteros MH6/UH1H/Merlin/autogiro, barcas) y los que se compran en el trader. Indestructibles=true: ningun vehiculo (ni sus piezas montadas) recibe dano de choques, disparos o explosiones; solo el agua les estropea el motor. Lo hace el mod propio @DayZKit.",
         "QuitarVanilla": true,
         "EventosVanilla": [
             "VehicleCivilianSedan",
@@ -386,7 +386,8 @@
             "VehicleTruck01",
             "VehicleOffroad02",
             "VehicleBoat"
-        ]
+        ],
+        "Indestructibles": true
     },
     "Jugabilidad": {
         "_info": "Minimapa: \"expansion\" = GPS de Expansion en pantalla sin objeto; \"mod\" = se desactiva el de Expansion porque se usa otro mod (MiniMap). SinStamina: correr, nadar y saltar no gastan stamina. El loot siempre en perfecto estado lo hace el mod propio @DayZKit (config/mods.json).",

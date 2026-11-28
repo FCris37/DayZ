@@ -603,6 +603,12 @@ if ($jg -and (Test-Path $mapFile)) {
     else { Ok 'Minimapa de Expansion desactivado (se usa el de otro mod); brujula y mapa con M siguen activos' }
 }
 
+# --- Ajustes del mod propio @DayZKit (vehiculos indestructibles...)
+$vh = $zonas.Vehiculos
+$ajKit = [pscustomobject]@{ VehiculosIndestructibles = [int][bool]($vh -and $vh.Indestructibles) }
+Guardar-Json $ajKit (Join-Path $Servidor 'profiles\DayZKit\ajustes.json')
+if ($ajKit.VehiculosIndestructibles) { Ok 'Vehiculos indestructibles (solo el agua les estropea el motor)' }
+
 # --- Marcadores en el mapa (en espanol): mercado, aparcamiento, helipuerto y zonas PvP
 if (Test-Path $mapFile) {
     $mp = Leer-Json $mapFile
