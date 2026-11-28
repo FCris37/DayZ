@@ -11,7 +11,7 @@ function Leer-Json([string]$Ruta) {
 
 # Guarda JSON en UTF-8 sin BOM (lo que esperan DayZ y Expansion).
 function Guardar-Json($Objeto, [string]$Ruta) {
-    $texto = $Objeto | ConvertTo-Json -Depth 32
+    $texto = ConvertTo-Json -InputObject $Objeto -Depth 32
     Guardar-Texto $texto $Ruta
 }
 

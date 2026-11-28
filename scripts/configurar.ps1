@@ -65,8 +65,21 @@ $generadas = @{}
 $listaMercados = foreach ($mm in ($todosMods | Where-Object { $_.Mercado })) {
     foreach ($cc in @($mm.Mercado)) { [pscustomobject]@{ Mod = $mm; Cat = $cc } }
 }
+$ae = $zonas.ArmasExclusivasPvP
 foreach ($par in @($listaMercados)) {
     $m = $par.Mod; $c = $par.Cat
+    if ($ae -and $ae.Activo -and $ae.QuitarDelTrader -and $c.Archivo -eq $ae.CategoriaArmas) {
+        # Armas exclusivas de las zonas PvP: fuera del mercado
+        $f = Join-Path $dirMarket "$($c.Archivo).json"; if (Test-Path $f) { Remove-Item $f }
+        $traderFile = Join-Path $dirTraders "$($c.Trader).json"
+        if (Test-Path $traderFile) {
+            $tr = Leer-Json $traderFile
+            Poner $tr 'Categories' @(@($tr.Categories) | Where-Object { $_ -and -not "$_".StartsWith("$($c.Archivo):") -and "$_" -ne $c.Archivo })
+            Guardar-Json $tr $traderFile
+        }
+        Info "$($c.Nombre): no se vende (armas exclusivas de las zonas PvP)"
+        continue
+    }
     $tiposDir = Join-Path $Mision "mods_ce\$($m.Carpeta.TrimStart('@'))"
     $tiposFiles = @(Get-ChildItem $tiposDir -Filter *.xml -ErrorAction SilentlyContinue)
     if ($tiposFiles.Count -eq 0) { Aviso "$($m.Carpeta): no hay types.xml en la mision (ejecuta el instalador). Categoria '$($c.Nombre)' omitida."; continue }
@@ -388,6 +401,46 @@ if ($lineas.Count -gt 0) {
     Aviso 'Sin traders activos (rellena sus coordenadas en config\zonas.json).'
 }
 
+# ======================================================================= 4b) Armas exclusivas de las zonas PvP
+$lootPvP = $null
+if ($ae -and $ae.Activo) {
+    Titulo '4b    Armas exclusivas de las zonas PvP'
+    $dirCe = Join-Path $Mision "mods_ce\$($ae.Mod.TrimStart('@'))"
+    $armas = New-Object System.Collections.ArrayList; $cargadores = New-Object System.Collections.ArrayList
+    foreach ($tf in @(Get-ChildItem $dirCe -Filter *.xml -ErrorAction SilentlyContinue)) {
+        $doc = New-Object System.Xml.XmlDocument; $doc.PreserveWhitespace = $true; $doc.Load($tf.FullName)
+        $cambiado = $false
+        foreach ($t in $doc.SelectNodes('//type')) {
+            $nom = $t.GetAttribute('name')
+            if ($nom -match $ae.FiltroAccesorios) {
+                if ($nom -match '(?i)mag') { [void]$cargadores.Add($nom) }
+                continue
+            }
+            [void]$armas.Add($nom)
+            if ($ae.QuitarDelLoot) {
+                foreach ($campo in 'nominal', 'min') { $nodo = $t.SelectSingleNode($campo); if ($nodo -and $nodo.InnerText -ne '0') { $nodo.InnerText = '0'; $cambiado = $true } }
+            }
+        }
+        if ($cambiado) { $doc.Save($tf.FullName) }
+    }
+    if ($armas.Count -eq 0) {
+        Aviso "No encuentro las armas de $($ae.Mod) (ejecuta el instalador con el mod activo)."
+    } else {
+        if ($ae.QuitarDelLoot) { Ok "$($armas.Count) armas de $($ae.Mod) ya no aparecen como loot por el mapa" }
+        # Lo que sueltan los bandidos al morir (cada objeto tiene su probabilidad)
+        $drop = New-Object System.Collections.ArrayList
+        $pA = [math]::Min(1.0, [double]$ae.ArmasPorBandido / $armas.Count)
+        foreach ($a in $armas) { [void]$drop.Add([pscustomobject]@{ ClassName = $a; Chance = [math]::Round($pA, 5) }) }
+        if ($cargadores.Count) {
+            $pC = [math]::Min(1.0, [double]$ae.CargadoresPorBandido / $cargadores.Count)
+            foreach ($c in $cargadores) { [void]$drop.Add([pscustomobject]@{ ClassName = $c; Chance = [math]::Round($pC, 5) }) }
+        }
+        $lootPvP = 'DayZKit_PvP'
+        Guardar-Json @($drop) (Join-Path $Perfil "AI\LootDrops\$lootPvP.json")
+        Ok ("Cada bandido de zona PvP suelta de media {0} arma(s) y {1} cargador(es) de {2}" -f $ae.ArmasPorBandido, $ae.CargadoresPorBandido, $ae.Mod)
+    }
+}
+
 # ======================================================================= 5) Bandidos IA
 Titulo '5/7  Patrullas de bandidos en zonas PvP'
 $aiFile = Join-Path $AjustesMision 'AIPatrolSettings.json'
@@ -412,6 +465,7 @@ if (Test-Path $aiFile) {
             MinSpreadRadius = 0; MaxSpreadRadius = [double]$z.Radio * 0.5
             Chance = 1.0; DespawnTime = -1; RespawnTime = [double]$b.SegundosParaReaparecer
             UseRandomWaypointAsStartPoint = 1; Waypoints = @(, (Vec $z.Centro))
+            LootDropOnDeath = $(if ($lootPvP) { $lootPvP } else { '' })
         })
         Ok "$($z.Nombre): patrulla de 2 a $($z.Bandidos) bandidos"
     }

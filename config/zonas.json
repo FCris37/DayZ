@@ -301,15 +301,48 @@
             "Bandidos": 4
         },
         {
-            "Nombre": "PvP - Base militar",
-            "Activo": false,
+            "Nombre": "PvP - Base militar oeste",
+            "Activo": true,
             "Centro": [
+                2757,
                 0,
-                0,
-                0
+                3605
             ],
             "Radio": 400,
             "Bandidos": 5
+        },
+        {
+            "Nombre": "PvP - Base militar este",
+            "Activo": true,
+            "Centro": [
+                8958,
+                0,
+                5906
+            ],
+            "Radio": 400,
+            "Bandidos": 5
+        },
+        {
+            "Nombre": "PvP - Base militar costa este",
+            "Activo": true,
+            "Centro": [
+                13135,
+                0,
+                9814
+            ],
+            "Radio": 400,
+            "Bandidos": 6
+        },
+        {
+            "Nombre": "PvP - Zona ártica",
+            "Activo": true,
+            "Centro": [
+                14200,
+                0,
+                14200
+            ],
+            "Radio": 1000,
+            "Bandidos": 6
         }
     ],
     "Bandidos": {
@@ -320,6 +353,17 @@
         "PrecisionMax": 0.7,
         "SegundosParaReaparecer": 1800,
         "SePuedenSaquear": true
+    },
+    "ArmasExclusivasPvP": {
+        "_info": "Armas de un mod que solo se consiguen en las zonas PvP: se quitan del loot del mapa (QuitarDelLoot) y las sueltan los bandidos de las zonas PvP al morir. QuitarDelTrader=true las quita tambien de la Armeria. Los cargadores y accesorios siguen saliendo normal.",
+        "Activo": true,
+        "Mod": "@SNAFU-Weapons",
+        "CategoriaArmas": "SNAFU_Armas",
+        "QuitarDelLoot": true,
+        "QuitarDelTrader": false,
+        "ArmasPorBandido": 1.0,
+        "CargadoresPorBandido": 1.5,
+        "FiltroAccesorios": "(?i)(mag|ammo|optic|scope|sight|suppressor|silencer|compensator|muzzle|bipod|light|rail|hndgrd|handguard|bttstck|buttstock|stock|grip|laser|bayonet)"
     },
     "Zombis": {
         "_info": "Multiplica los zombis de Deer Isle. 1.0 = como viene el mapa, 2.0 = el doble, 3.0 = el triple. MaximoGlobal = tope de zombis vivos en todo el mapa a la vez (por defecto 1000). Mas zombis = mas carga para el PC.",
