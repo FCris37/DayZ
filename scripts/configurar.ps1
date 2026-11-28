@@ -360,6 +360,8 @@ foreach ($t in $traders) {
 }
 Poner $safe 'Enabled' ([int]($traders.Count -gt 0))
 Poner $safe 'CircleZones' @($circulos)
+# Los vehiculos aparcados en la zona segura (p. ej. el parking del mercado) no se borran
+Poner $safe 'EnableForceSZCleanupVehicles' 0
 Guardar-Json $safe $safeFile
 if ($traders.Count -eq 0) { Aviso 'No hay traders activos todavia: zonas seguras desactivadas.' }
 
@@ -620,6 +622,13 @@ if (Test-Path $mapFile) {
         if ($mc.EntregaHelicopteros -and $mc.EntregaHelicopteros.Posicion) { Marcador 'Helipuerto' 'Helipuerto' 'Helicopter' $azul $mc.EntregaHelicopteros.Posicion 4 }
     }
     # Zonas PvP: contorno de puntos rojos (el mapa de Expansion no dibuja circulos) y el nombre arriba
+    # Marcadores extra definidos a mano en zonas.json (Texto, Icono, Posicion)
+    $e = 0
+    foreach ($mk in @($zonas.Marcadores | Where-Object { $_ -and $_.Posicion -and -not (Es-Cero $_.Posicion) })) {
+        $e++
+        $ico = if ($mk.Icono) { $mk.Icono } else { 'Marker' }
+        Marcador "Extra$e" $mk.Texto $ico $azul $mk.Posicion 4
+    }
     $k = 0
     foreach ($z in $pvp) {
         $k++

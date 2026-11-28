@@ -471,5 +471,17 @@
         "RecompensaTesoro": 2500,
         "RecompensaPieles": 3000,
         "RecompensaDiario": 1500
-    }
+    },
+    "Marcadores": [
+        {
+            "_info": "Marcadores propios en el mapa (azules). Icono: Car, Helicopter, Trader, Base, Boat, Marker... Los que tienen Posicion 0,0,0 se ignoran.",
+            "Texto": "Parking del mercado",
+            "Icono": "Car",
+            "Posicion": [
+                0,
+                0,
+                0
+            ]
+        }
+    ]
 }
